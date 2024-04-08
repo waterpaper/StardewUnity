@@ -1,0 +1,17 @@
+{
+    "data":
+    [
+        {"Id":100001,"Name":"어린 닭","Name_En":"BabyChicken","Width":1,"Height":1,"Type":1},
+        {"Id":100002,"Name":"어린 소","Name_En":"BabyCow","Width":1,"Height":1,"Type":2},
+        {"Id":100003,"Name":"어린 염소","Name_En":"BabyGoat","Width":1,"Height":1,"Type":2},
+        {"Id":100004,"Name":"어린 돼지","Name_En":"BabyPig","Width":1,"Height":1,"Type":2},
+        {"Id":100005,"Name":"어린 토끼","Name_En":"BabyRabbit","Width":1,"Height":1,"Type":1},
+        {"Id":100006,"Name":"어린 양","Name_En":"BabySheep","Width":1,"Height":1,"Type":2},
+        {"Id":110001,"Name":"닭","Name_En":"Chicken","Width":1,"Height":1,"Type":1},
+        {"Id":110002,"Name":"소","Name_En":"Cow","Width":1,"Height":1,"Type":2},
+        {"Id":110003,"Name":"염소","Name_En":"Goat","Width":1,"Height":1,"Type":2},
+        {"Id":110004,"Name":"돼지","Name_En":"Pig","Width":1,"Height":1,"Type":2},
+        {"Id":110005,"Name":"토끼","Name_En":"Rabbit","Width":1,"Height":1,"Type":1},
+        {"Id":110006,"Name":"양","Name_En":"Sheep","Width":1,"Height":1,"Type":2}
+    ]   
+}

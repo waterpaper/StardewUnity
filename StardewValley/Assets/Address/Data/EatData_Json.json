@@ -1,0 +1,19 @@
+{
+    "data":
+    [
+        {"Id":401,"AddHp":11,"AddPower":25},
+        {"Id":402,"AddHp":11,"AddPower":25},
+        {"Id":403,"AddHp":33,"AddPower":75},
+        {"Id":404,"AddHp":22,"AddPower":55},
+        {"Id":405,"AddHp":11,"AddPower":25},
+        {"Id":406,"AddHp":5,"AddPower":13},
+        {"Id":407,"AddHp":50,"AddPower":113},
+        {"Id":408,"AddHp":20,"AddPower":45},
+        {"Id":409,"AddHp":11,"AddPower":25},
+        {"Id":410,"AddHp":90,"AddPower":20},
+        {"Id":412,"AddHp":20,"AddPower":45},
+        {"Id":601,"AddHp":100,"AddPower":100},
+        {"Id":701,"AddHp":11,"AddPower":25},
+        {"Id":703,"AddHp":17,"AddPower":38}
+    ]
+}

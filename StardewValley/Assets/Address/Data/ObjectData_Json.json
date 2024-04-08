@@ -1,0 +1,10 @@
+{
+    "data":
+    [
+        {"Id":1001,"Name": "돌","ImagePath":"Atlas_Objects","ImageName":"objects","Index":446, "Width" :1, "Height": 1, "ViewX" :-0.5, "ViewY": 0.5, "Hp": 1, "IsDestroy": true, "ToolsType":2, "ToolsLevel" :1, "ItemIds" : [201], "ItemCounts":[1]},
+        {"Id":1002,"Name": "나무 조가리","ImagePath":"Atlas_Objects","ImageName":"objects","Index":291, "Width" :1, "Height": 1, "ViewX" :-0.5, "ViewY": 0.5, "Hp": 1, "IsDestroy": true, "ToolsType":3, "ToolsLevel" :1, "ItemIds" : [202], "ItemCounts":[1]},
+        {"Id":1003,"Name": "풀","ImagePath":"Atlas_Objects","ImageName":"objects","Index":671, "Width" :1, "Height": 1, "ViewX" :-0.5, "ViewY": 0.5, "Hp": 1, "IsDestroy": true, "ToolsType":5, "ToolsLevel" :1, "ItemIds" : [204], "ItemCounts":[1]},
+        {"Id":1004,"Name": "큰돌","ImagePath":"Atlas_Objects","ImageName":"objects","Index":668, "Width" :2, "Height": 2, "ViewX" :-1, "ViewY": 1, "Hp": 1, "IsDestroy": true, "ToolsType":2, "ToolsLevel" :1, "ItemIds" : [204], "ItemCounts":[10]},
+        {"Id":1005,"Name": "나무1","ImagePath":"Atlas_Trees","ImageName":"tree","Index":0, "Width" :1, "Height": 1, "ViewX" :0, "ViewY": 2.5, "Hp": 1, "IsDestroy": true, "ToolsType":3, "ToolsLevel" :1, "ItemIds" : [202], "ItemCounts":[1]}
+    ]
+}

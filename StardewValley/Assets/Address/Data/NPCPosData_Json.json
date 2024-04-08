@@ -1,0 +1,37 @@
+{
+    "data":
+    [
+        {"Id":10001,"Map":"Town","PosX":20,"PosY":7,"Move":1},
+        {"Id":10002,"Map":"Town","PosX":20,"PosY":29,"Move":1},
+        {"Id":10003,"Map":"Town","PosX":45,"PosY":7,"Move":1},
+        {"Id":10004,"Map":"Town","PosX":45,"PosY":29,"Move":1},
+        {"Id":10005,"Map":"Town","PosX":20,"PosY":15,"Move":1},
+        {"Id":10006,"Map":"Town","PosX":25,"PosY":25,"Move":1},
+        {"Id":10007,"Map":"Town","PosX":45,"PosY":15,"Move":1},
+        {"Id":10008,"Map":"Town","PosX":20,"PosY":20,"Move":1},
+        {"Id":10009,"Map":"Town","PosX":20,"PosY":25,"Move":1},
+        {"Id":10010,"Map":"Town","PosX":45,"PosY":15,"Move":1},
+        {"Id":10011,"Map":"Town","PosX":45,"PosY":20,"Move":1},
+        {"Id":10012,"Map":"Town","PosX":45,"PosY":25,"Move":1},
+        {"Id":10013,"Map":"Town","PosX":30,"PosY":10,"Move":1},
+        {"Id":10014,"Map":"Town","PosX":30,"PosY":15,"Move":1},
+        {"Id":10015,"Map":"Town","PosX":30,"PosY":20,"Move":1},
+        {"Id":10016,"Map":"Town","PosX":30,"PosY":25,"Move":1},
+        {"Id":10017,"Map":"Town","PosX":30,"PosY":29,"Move":1},
+        {"Id":10018,"Map":"Town","PosX":25,"PosY":10,"Move":1},
+        {"Id":10019,"Map":"Town","PosX":25,"PosY":15,"Move":1},
+        {"Id":10020,"Map":"Town","PosX":25,"PosY":20,"Move":1},
+        {"Id":10021,"Map":"Town","PosX":25,"PosY":30,"Move":1},
+        {"Id":10022,"Map":"Town","PosX":35,"PosY":10,"Move":1},
+        {"Id":10023,"Map":"Town","PosX":35,"PosY":15,"Move":1},
+        {"Id":10024,"Map":"Shop","PosX":6.5,"PosY":14.5,"Move":0},
+        {"Id":10025,"Map":"Shop","PosX":14.5,"PosY":6.5,"Move":1},
+        {"Id":10026,"Map":"Shop","PosX":3.5,"PosY":7.5,"Move":1},
+        {"Id":10027,"Map":"Town","PosX":35,"PosY":20,"Move":1},
+        {"Id":10028,"Map":"Town","PosX":35,"PosY":25,"Move":1},
+        {"Id":10029,"Map":"Town","PosX":35,"PosY":29,"Move":1},
+        {"Id":10030,"Map":"Town","PosX":40,"PosY":10,"Move":1},
+        {"Id":10031,"Map":"Town","PosX":40,"PosY":15,"Move":1},
+        {"Id":10032,"Map":"Town","PosX":40,"PosY":20,"Move":1}
+    ]
+}
