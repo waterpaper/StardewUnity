@@ -21,16 +21,23 @@ namespace WATP.UI
             list.Sort((a, b) =>
             {
                 if (a.likeAbility < b.likeAbility)
+                    return 1;
+                else if (a.likeAbility > b.likeAbility)
                     return -1;
                 else
-                    return 1;
+                {
+                    if (a.id > b.id)
+                        return 1;
+                    else
+                        return -1;
+                }
             });
 
             for (int i = 0; i < list.Count; i++)
             {
                 if(i == 0)
                 {
-                    likePanel.Setting(list[i].id, list[i].likeAbility);
+                    likePanel.Setting(list[i].id, list[i].likeAbility / 10);
                 }
                 else
                 {

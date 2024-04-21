@@ -1,15 +1,16 @@
 using Cysharp.Threading.Tasks;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace WATP.UI
 {
+    /// <summary>
+    /// page 기반 확장 코드
+    /// </summary>
     public static class PageExtention
     {
         public static T CreatePage<T>(this PageWidget page, string prefabName, bool isOpen, RectTransform root) where T : PageWidget
         {
-            //EventManager.Instance.SendEvent(new OpenCircleLoadingEvent());
             var path = page.PathDefault ? $"Address/Prefab/UI/Page/{prefabName}.prefab" : $"Address/Prefab/UI/Page/{prefabName}.prefab";
 
             var rect = page.Load(path, root);
@@ -25,7 +26,6 @@ namespace WATP.UI
 
             rect.gameObject.SetActive(false);
             page.LoadPage().Forget();
-            //EventManager.Instance.SendEvent(new CloseCircleLoadingEvent());
             if (isOpen)
                 page.Show();
             else
@@ -36,7 +36,6 @@ namespace WATP.UI
 
         public static async UniTask<T> CreatePageAsync<T>(this PageWidget page, string prefabName, bool isOpen, RectTransform root) where T : PageWidget
         {
-            //EventManager.Instance.SendEvent(new OpenCircleLoadingEvent());
             var path = page.PathDefault ? $"Address/Prefab/UI/Page/{prefabName}.prefab" : $"Address/Prefab/UI/Page/{prefabName}.prefab";
 
             var rect = await page.LoadAsync(path, root);
@@ -52,7 +51,6 @@ namespace WATP.UI
 
             await page.LoadPage();
             rect.gameObject.SetActive(true);
-            //EventManager.Instance.SendEvent(new CloseCircleLoadingEvent());
             if (isOpen)
                 page.Show();
             else

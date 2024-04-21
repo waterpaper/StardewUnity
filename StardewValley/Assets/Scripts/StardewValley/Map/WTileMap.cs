@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,38 +10,10 @@ using WATP.Structure;
 
 namespace WATP.Map
 {
-    [Serializable]
-    public class Portalinfo
-    {
-        public int portalPosX;
-        public int portalPosY;
-        public string portalName;
-        public float portalNextPosX;
-        public float portalNextPosY;
-    }
-
-    [Serializable]
-    public class SaveTileInfo
-    {
-        public string imagePrefix;
-        public string imageName;
-        public int imageIndex;
-        public int block;
-        public char type;
-    }
-
-    [Serializable]
-    public class SaveTileMapForm
-    {
-        public int tileX;
-        public int tileY;
-        [SerializeField]
-        public List<SaveTileInfo> tiles;
-        [SerializeField]
-        public List<Portalinfo> portals;
-    }
-
-
+    /// <summary>
+    /// 각 layer에 해당하는 tile map을 생성 관리하는 클래스
+    /// cell을 통해 길 찾기와 같은 옵션처리 로직도 관리한다.
+    /// </summary>
     public class WTileMap
     {
         int layerIndex;
@@ -169,7 +142,7 @@ namespace WATP.Map
             cells[mapX * y + x].SetAttribute(type);
         }
 
-        public void MapSetting(SaveTileMapForm mapForm, int month = 1)
+        public async UniTask MapSetting(SaveTileMapForm mapForm, int month = 1)
         {
             if (tilemap == null) return;
 
@@ -185,6 +158,7 @@ namespace WATP.Map
             string preFix = null;
             string imageName = null;
             string monthText = "spring";
+            string path = null;
             if (month == 2) monthText = "summer";
             else if (month == 3) monthText = "fall";
             else if (month == 4) monthText = "winter";
@@ -207,22 +181,13 @@ namespace WATP.Map
                     preFix = tileInfo.imagePrefix;
                     imageName = tileInfo.imageName;
                     imageName = imageName.Replace("spring", monthText);
+                    path = string.IsNullOrEmpty(preFix) ? (string.IsNullOrEmpty(imageName) ? null : $"Address/Sprite/TileSheets/{imageName}.png[{imageName}_{tileInfo.imageIndex}]") 
+                         : $"Address/Sprite/TileSheets/{preFix}/{imageName}.png[{imageName}_{tileInfo.imageIndex}]";
 
-                    if (string.IsNullOrEmpty(preFix))
-                    {
-                        if (!string.IsNullOrEmpty(imageName))
-                        {
-                            tile.m_Sprite = AssetLoader.Load<Sprite>($"Address/Sprite/TileSheets/{imageName}.png[{imageName}_{tileInfo.imageIndex}]");
-                        }
-                        else
-                        {
-                            tile.m_Sprite = null;
-                        }
-                    }
-                    else if (!string.IsNullOrEmpty(imageName))
-                        tile.m_Sprite = AssetLoader.Load<Sprite>($"Address/Sprite/TileSheets/{preFix}/{imageName}.png[{imageName}_{tileInfo.imageIndex}]");
-                    else
+                    if (string.IsNullOrEmpty(path))
                         tile.m_Sprite = null;
+                    else
+                        tile.m_Sprite = AssetLoader.Load<Sprite>(path);
 
                     var cell = GetCell(j, i);
                     cell.SetAttribute(tileInfo.type);
@@ -249,6 +214,8 @@ namespace WATP.Map
 
             foreach (var portalInfo in mapForm.portals)
                 portalInfos.Add(portalInfo);
+
+            await UniTask.DelayFrame(1);
         }
 
         public void InitCell()
@@ -279,7 +246,7 @@ namespace WATP.Map
                 {
                     v2.x = j;
                     v2.y = i;
-                    cells.Add(new Cell(v2, 1, 1, 1, default, default));
+                    cells.Add(new Cell(v2, 1, default, default));
                 }
             }
 

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace WATP
 {
+    /// <summary>
+    /// Event driven을 이용하여 모듈간 통신 진행
+    /// </summary>
     public class EventListeners
     {
         private readonly Dictionary<Type, List<Action<IGameEvent>>> listeners = new Dictionary<Type, List<Action<IGameEvent>>>();

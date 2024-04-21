@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -25,8 +26,7 @@ namespace WATP
         /// <summary>
         /// 참조 합니다.
         /// </summary>
-        /// <returns></returns>
-        public async UniTask<T> ReferencingAsync<T>() where T : UnityEngine.Object
+        public async UniTask<T> ReferencingAsync<T>(CancellationTokenSource cancellationToken = null) where T : UnityEngine.Object
         {
             try
             {
@@ -35,12 +35,20 @@ namespace WATP
                 if (obj == null && refCount == 1)
                 {
                     var lhandle = Addressables.LoadAssetAsync<T>(assetPath);
-                    obj = await lhandle.ToUniTask();
+                    obj = await lhandle.Task;
                 }
                 else if (obj == null && refCount > 1)
                 {
                     await UniTask.WaitUntil(() => { return obj != null; });
                 }
+
+                //cancel
+                if (cancellationToken != null && cancellationToken.IsCancellationRequested)
+                {
+                    Unreferencing(obj);
+                    throw new Exception("Cancel");
+                }
+
 
                 if (obj is GameObject)
                 {
@@ -61,7 +69,7 @@ namespace WATP
             }
             catch (Exception e)
             {
-                Debug.Log("error");
+                Debug.Log("error\n" + e);
                 throw e;
             }
         }
@@ -69,7 +77,6 @@ namespace WATP
         /// <summary>
         /// 참조 합니다.
         /// </summary>
-        /// <returns></returns>
         public T Referencing<T>() where T : UnityEngine.Object
         {
             try
@@ -109,8 +116,6 @@ namespace WATP
         /// <summary>
         /// 참조를 해제합니다.
         /// </summary>
-        /// <param name="obj"></param>
-        /// <typeparam name="T"></typeparam>
         public async void Unreferencing<T>(T target)
             where T : UnityEngine.Object
         {
@@ -144,7 +149,6 @@ namespace WATP
 
                 Addressables.Release(this.obj);
                 this.obj = target = null;
-                // Debugger.Log($"Release Asset: {_object.name}");
             }
             catch(Exception e)
             {

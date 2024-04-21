@@ -3,60 +3,56 @@ using WATP.ECS;
 
 namespace WATP.View
 {
-    public class CropsView : View<CropsEntity>
+    public class CropsView : View<CropsAspect>
     {
         protected float multiply = 1;
 
         protected SpriteRenderer spriteRenderer;
         protected Animator anim;
+        protected EventActionComponent eventActionComponent;
 
 
-        public CropsView(CropsEntity crops, Transform parent)
+        public CropsView(CropsAspect crops, EventActionComponent eventActionComponent, Transform parent)
         {
             entity = crops;
             Parent = parent;
 
             PrefabPath = $"Address/Prefab/Crops.prefab";
+            this.eventActionComponent = eventActionComponent;
+            this.uid = entity.Index;
         }
 
         protected override void OnLoad()
         {
-            this.uid = entity.UID;
-
-            Transform.position = entity.TransformComponent.position;
+            Transform.position = entity.Position;
             spriteRenderer = Transform.GetChild(0).GetChild(0).GetComponent<SpriteRenderer>();
             anim = Transform.GetChild(0).GetChild(1).GetComponent<Animator>();
-            entity.EventComponent.onEvent += StateUpdate;
 
-            StateUpdate("Day");
-
-#if UNITY_EDITOR
-            /*  var giz = trs.gameObject.AddComponent<PRSUnitGizmo>();
-              giz.unit = smlUnit;*/
-#endif
+            eventActionComponent.OnEvent += StateUpdate;
+            StateUpdate((int)EventKind.Day);
         }
 
         protected override void OnDestroy()
         {
-            entity.EventComponent.onEvent -= StateUpdate;
-            entity = null;
-            //EventManager.Instance.SendEvent(new SoundDefaultEvent("UnitDeath"));
+            eventActionComponent.OnEvent -= StateUpdate;
+            eventActionComponent = null;
+            entity = default;
         }
 
         protected override void OnRender()
         {
         }
 
-        void StateUpdate(string str)
+        void StateUpdate(int state)
         {
-            if (entity == null || entity.DeleteReservation || isPrefab == false) return;
-            switch (str)
+            if (entity.Equals(default) || entity.DeleteComponent.isDelate || isPrefab == false) return;
+            switch (state)
             {
-                case "Day":
+                case (int)EventKind.Day:
                     var index = Root.GameDataManager.TableData.GetCropsIndex(entity.CropsDataComponent.id, entity.CropsDataComponent.day);
                     spriteRenderer.sprite = Root.GameDataManager.AtlasContainer.GetSheetSprite(Root.GameDataManager.AtlasContainer.CROPS, $"crops_{index}");
                     break;
-                case "End":
+                case (int)EventKind.End:
                     spriteRenderer.gameObject.SetActive(false);
                     anim.gameObject.SetActive(true);
                     break;

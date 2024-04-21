@@ -13,6 +13,11 @@ namespace WATP
         postProcess
     }
 
+    /// <summary>
+    /// 초기 전체 데이터 로드 프로세스 처리
+    /// pre -> default -> post 순으로 처리되며
+    /// default만 percent 계산
+    /// </summary>
     public static class Loading
     {
         private static List<IEnumerator> preLoads = new List<IEnumerator>();
@@ -81,6 +86,8 @@ namespace WATP
             {
                 await UniTask.Yield();
             }
+
+            await UniTask.Delay(2000);
 
             //Debug.Log($"data postLoads end({postCount}/ {postLoads.Count})");
 

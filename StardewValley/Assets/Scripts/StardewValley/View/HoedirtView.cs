@@ -3,59 +3,59 @@ using WATP.ECS;
 
 namespace WATP.View
 {
-    public class HoedirtView : View<HoedirtEntity>
+    public class HoedirtView : View<HoedirtAspect>
     {
+        private bool isWatering =false;
         protected float multiply = 1;
 
         protected SpriteRenderer spriteRenderer;
         protected Animator dirtAnim;
         protected Animator wateringAnim;
+        protected EventActionComponent eventActionComponent;
 
 
-        public HoedirtView(HoedirtEntity hoedirt, Transform parent)
+        public HoedirtView(HoedirtAspect hoedirt, EventActionComponent eventActionComponent, Transform parent)
         {
             entity = hoedirt;
             Parent = parent;
 
             PrefabPath = $"Address/Prefab/Hoedirt.prefab";
+            this.eventActionComponent = eventActionComponent;
+            this.uid = entity.Index;
         }
 
         protected override void OnLoad()
         {
-            this.uid = entity.UID;
+            this.uid = entity.Index;
 
-            Transform.position = entity.TransformComponent.position;
+            Transform.position = entity.Position;
             spriteRenderer = Transform.GetChild(0).GetChild(0).GetComponent<SpriteRenderer>();
             dirtAnim = Transform.GetChild(0).GetChild(1).GetComponent<Animator>();
             wateringAnim = Transform.GetChild(0).GetChild(2).GetComponent<Animator>();
-            entity.EventComponent.onEvent += StateUpdate;
 
             dirtAnim.gameObject.SetActive(entity.HoedirtDataComponent.add);
-
-#if UNITY_EDITOR
-            /*  var giz = trs.gameObject.AddComponent<PRSUnitGizmo>();
-              giz.unit = smlUnit;*/
-#endif
+            eventActionComponent.OnEvent += StateUpdate;
+            StateUpdate(entity.HoedirtDataComponent.watering ? (int)EventKind.Watering : (int)EventKind.Normal);
         }
 
         protected override void OnDestroy()
         {
-            entity.EventComponent.onEvent -= StateUpdate;
-            entity = null;
-            //EventManager.Instance.SendEvent(new SoundDefaultEvent("UnitDeath"));
+            eventActionComponent.OnEvent -= StateUpdate;
+            eventActionComponent = null;
+            entity = default;
         }
 
         protected override void OnRender()
         {
         }
 
-        void StateUpdate(string str)
+        void StateUpdate(int state)
         {
-            if (entity == null || entity.DeleteReservation || isPrefab == false) return;
+            if (entity.Equals(default) || entity.DeleteComponent.isDelate || isPrefab == false) return;
             int index = 0;
-            switch (str)
+            switch (state)
             {
-                case "Normal":
+                case (int)EventKind.Normal:
                     if (entity.HoedirtDataComponent.up)
                     {
                         if (entity.HoedirtDataComponent.down)
@@ -119,8 +119,10 @@ namespace WATP.View
                     {
                         index = 0;
                     }
+
+                    isWatering = false;
                     break;
-                case "Watering":
+                case (int)EventKind.Watering:
                     if (entity.HoedirtDataComponent.up)
                     {
                         if (entity.HoedirtDataComponent.down)
@@ -185,8 +187,12 @@ namespace WATP.View
                         index = 4;
                     }
 
-                    wateringAnim.gameObject.SetActive(false);
-                    wateringAnim.gameObject.SetActive(true);
+                    if (isWatering == false)
+                    {
+                        wateringAnim.gameObject.SetActive(false);
+                        wateringAnim.gameObject.SetActive(true);
+                        isWatering = true;
+                    }
                     break;
             }
 

@@ -12,8 +12,6 @@ namespace WATP.UI
         /// <summary>
         /// 해당 위치에 ui object가 있는지 확인
         /// </summary>
-        /// <param name="touchPos"></param>
-        /// <returns></returns>
         public static bool IsPointerOverUIObject(this UIManager uiManager, Vector3 touchPos)
         {
             PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
@@ -28,8 +26,6 @@ namespace WATP.UI
         /// <summary>
         /// 해당 위치에 해당 ui가 있는지 확인
         /// </summary>
-        /// <param name="touchPos"></param>
-        /// <returns></returns>
         static public bool IsPointerOverWidget(this UIManager uiManager, Vector3 touchPos, Widget widget)
         {
             PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
@@ -70,9 +66,6 @@ namespace WATP.UI
         /// <summary>
         /// 하위 object 중 해당 name을 찾아주는 함수
         /// </summary>
-        /// <param name="parent"></param>
-        /// <param name="childName"></param>
-        /// <returns></returns>
         public static RectTransform RecursiveFindChild(this RectTransform widgetTrs, string childName, string parentName = null)
         {
             try
@@ -102,9 +95,6 @@ namespace WATP.UI
         /// <summary>
         /// 하위 object 중 해당 name을 찾아주는 함수
         /// </summary>
-        /// <param name="parent"></param>
-        /// <param name="childName"></param>
-        /// <returns></returns>
         public static Transform RecursiveFindChild(this Transform widgetTrs, string childName, string parentName = null)
         {
             foreach (Transform child in widgetTrs)
@@ -134,8 +124,6 @@ namespace WATP.UI
         /// </summary>
         /// <param name="customPrefabPath"> 기본 프리팹 네임 </param>
         /// <param name="isEnable"> 생성시 열지 안 열지 </param>
-        /// <typeparam name="T"></typeparam>
-        /// <returns>생성된 위젯</returns>
         static public T PrefabCreate<T>(this T widget, string customPrefabPath, RectTransform parent, bool isEnable = true)
             where T : Widget
         {
@@ -156,8 +144,6 @@ namespace WATP.UI
         /// </summary>
         /// <param name="customPrefabPath"> 기본 프리팹 네임 </param>
         /// <param name="isEnable"> 생성시 열지 안 열지 </param>
-        /// <typeparam name="T"></typeparam>
-        /// <returns>생성된 위젯</returns>
         static public async UniTask<T> PrefabCreateAsync<T>(this T widget, string customPrefabPath, RectTransform parent, bool isEnable = true)
             where T : Widget
         {
@@ -176,10 +162,6 @@ namespace WATP.UI
         /// <summary>
         /// world 좌표를 canvas 좌표로 바꿔주는 함수
         /// </summary>
-        /// <param name="canvas"></param>
-        /// <param name="camera"></param>
-        /// <param name="position"></param>
-        /// <returns></returns>
         public static Vector2 WorldToCanvasPosition(this Widget widget, RectTransform canvas, Camera camera, Vector2 position)
         {
             Vector3 vPos = new Vector3(position.x, 0, position.y);
@@ -189,10 +171,6 @@ namespace WATP.UI
         /// <summary>
         /// world 좌표를 canvas 좌표로 바꿔주는 함수
         /// </summary>
-        /// <param name="canvas"></param>
-        /// <param name="camera"></param>
-        /// <param name="position"></param>
-        /// <returns></returns>
         public static Vector2 WorldToCanvasPosition(this Widget widget, RectTransform canvas, Camera camera, Vector3 position)
         {
             Vector3 temp = camera.WorldToViewportPoint(position);

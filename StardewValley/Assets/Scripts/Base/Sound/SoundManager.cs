@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace WATP
 {
@@ -10,11 +9,13 @@ namespace WATP
         BGM,
         SFX,
     }
-
+    /// <summary>
+    /// 전체 사운드를 관리하는 매니저
+    /// </summary>
     public class SoundManager
     {
         private Transform transform;
-        // todo: 나중에 변동 가능하도록 변경
+        // todo: 변동 가능하도록 제작
         Dictionary<SoundTrack, uint> trackCounts = new Dictionary<SoundTrack, uint>()
         {
             { SoundTrack.BGM, 1},

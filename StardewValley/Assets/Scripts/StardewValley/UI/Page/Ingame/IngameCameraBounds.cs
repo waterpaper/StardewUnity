@@ -1,3 +1,4 @@
+using Unity.Mathematics;
 using UnityEngine;
 using WATP.ECS;
 
@@ -5,32 +6,36 @@ namespace WATP.UI
 {
     public class IngameCameraBounds
     {
-        private Vector3 beforePos;
-        private Vector3 pos;
-        private FarmerEntity player;
+        private float3 beforePos;
+        private float3 pos;
+        private MapObjectManager mapObjectManager;
+        private bool isSetting;
         private int sizeX;
         private int sizeY;
 
-        public void Setting(FarmerEntity player)
+        public void Setting()
         {
-            this.player = player;
+            this.mapObjectManager = StardewValleyRoot.MapObjectManager;
+            isSetting = true;
         }
 
         public void Dispose()
         {
-            player = null;
+            mapObjectManager = null;
+            isSetting = false;
         }
 
         public void Update()
         {
-            if (player == null) return;
-            if (beforePos == player.TransformComponent.position) return;
+            if (!isSetting || Root.State.logicState.Value == LogicState.Parse) return;
+            var playerPostion = mapObjectManager.PlayerPosision;
+            if (math.all(beforePos == playerPostion)) return;
 
-            pos.x = player.TransformComponent.position.x;
-            pos.y = player.TransformComponent.position.y;
+            pos.x = playerPostion.x;
+            pos.y = playerPostion.y;
             pos.z = Camera.main.transform.position.z;
 
-            beforePos = player.TransformComponent.position;
+            beforePos = playerPostion;
             Camera.main.transform.position = ConfirmBounds(pos);
         }
 

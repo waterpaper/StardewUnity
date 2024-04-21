@@ -1,19 +1,18 @@
+using Unity.Entities;
+
 namespace WATP.ECS
 {
-    public interface IHoedirtDataComponent : IComponent, ITransformComponent,IEventComponent
+    /// <summary>
+    ///  entity°¡ °¡Áø data component
+    /// </summary>
+    public struct HoedirtDataComponent : IComponentData
     {
-        public HoedirtDataComponent HoedirtDataComponent { get; }
-    }
-
-    [System.Serializable]
-    public class HoedirtDataComponent
-    {
-        public bool watering = false;
-        public bool add = false;
-        public bool up = false;
-        public bool left = false;
-        public bool down = false;
-        public bool right = false;
+        public bool watering;
+        public bool add;
+        public bool up;
+        public bool left;
+        public bool down;
+        public bool right;
     }
 
 }

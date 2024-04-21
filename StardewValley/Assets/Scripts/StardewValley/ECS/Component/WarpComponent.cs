@@ -1,16 +1,12 @@
-using UnityEngine;
+using Unity.Entities;
 
 namespace WATP.ECS
 {
-    public interface IWarpComponent : IComponent, ITransformComponent
+    /// <summary>
+    /// 워프 가능 여부를 가진 component
+    /// </summary>
+    public struct WarpComponent : IComponentData
     {
-        public WarpComponent WarpComponent { get; }
-    }
-
-    [System.Serializable]
-    public class WarpComponent
-    {
-        /// <summary> 워프 가능여부 </summary>
-        [SerializeField] public bool isEnable = true;
+         public bool isEnable;
     }
 }

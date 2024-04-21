@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace WATP.Structure
 {
+    /// <summary>
+    /// °¡ÁßÄ¡ ·£´ý
+    /// </summary>
     public class RandomWeight<T>
     {
         List<RandomElement<T>> list = new List<RandomElement<T>>();

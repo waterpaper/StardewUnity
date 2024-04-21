@@ -1,6 +1,6 @@
 using Cysharp.Threading.Tasks;
 using System;
-using System.Collections;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -17,15 +17,19 @@ namespace WATP
 
         private IScene nowScene;
         private float progress = 1;
+        private CancellationTokenSource token = new CancellationTokenSource();
 
         public Action<SceneKind> onSceneChangeStart;
         public Action<float> onSceneChangeProgress;
         public Action onSceneChangeComplete;
 
         public bool IsLoad { get => isLoad; }
-        public float Progress { get=> progress; private set {
+        public float Progress
+        {
+            get => progress; private set
+            {
                 progress = value;
-            }  
+            }
         }
 
         public void Dispose()
@@ -33,6 +37,8 @@ namespace WATP
             onSceneChangeStart = null;
             onSceneChangeProgress = null;
             onSceneChangeComplete = null;
+            token.Cancel();
+            token.Dispose();
         }
 
         public void Update()
@@ -55,7 +61,15 @@ namespace WATP
             }
 
             isLoad = true;
-            await SceneLoadCoroutine(scenekind);
+
+            try
+            {
+                await SceneLoadAsync(scenekind);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
         }
 
         #region scene loading
@@ -63,63 +77,25 @@ namespace WATP
         /// <summary>
         /// 로드할 씬에 맞게 이벤트 실행
         /// </summary>
-        private IEnumerator SceneLoadCoroutine(SceneKind scenekind)
+        private async UniTask SceneLoadAsync(SceneKind scenekind)
         {
             Progress = 0.0f;
-            onSceneChangeStart?.Invoke(scenekind);
-            onSceneChangeProgress?.Invoke(Progress);
-            yield return null;
-
-            if (nowScene != null)
-            {
-                yield return nowScene.Unload();
-
-                if (nowScene.GetSceneAssetName() != null)
-                {
-                    var beforeOp = SceneManager.UnloadSceneAsync(nowScene.GetSceneAssetName());
-
-                    if (beforeOp.isDone != true)
-                        yield return null;
-                }
-            }
-
-            var unLoadResourceop = Resources.UnloadUnusedAssets();
-            yield return new WaitForSeconds(0.2f);
-
-            if (unLoadResourceop.isDone != true)
-                yield return null;
 
             IScene scene = CreateScene(scenekind);
+            onSceneChangeStart?.Invoke(scenekind);
+            onSceneChangeProgress?.Invoke(Progress);
 
-            if (scene.GetSceneAssetName() != null)
-            {
-                var operation = SceneManager.LoadSceneAsync(scene.GetSceneAssetName());
-                operation.allowSceneActivation = false;
-                operation.completed += (op) =>
-                {
-                    SceneCameraSetting(SceneManager.GetSceneByName(scene.GetSceneAssetName()));
-                };
+            if (await UnloadScene() == false)
+                return;
 
-                while (operation != null && operation.progress < 0.9f)
-                {
-                    Progress = operation.progress;
-                    onSceneChangeProgress?.Invoke(Progress);
-                    yield return null;
-                }
+            await UnloadResource();
 
-                Progress = operation.progress;
+            if (await LoadNowScene(scene) == false)
+                return;
 
-                operation.allowSceneActivation = true;
-                while (operation != null && !operation.isDone)
-                    yield return null;
-
-                var objs = SceneManager.GetSceneByName(scene.GetSceneAssetName()).GetRootGameObjects();
-            }
-
-            yield return scene.Load();
             Progress = 1.0f;
             onSceneChangeProgress?.Invoke(Progress);
-            yield return new WaitForSeconds(0.5f);
+            await UniTask.DelayFrame(1);
             isLoad = false;
             scene.Complete();
             onSceneChangeComplete?.Invoke();
@@ -129,8 +105,6 @@ namespace WATP
         /// <summary>
         /// enum에 맞는 scene 생성
         /// </summary>
-        /// <param name="kind"></param>
-        /// <returns></returns>
         private IScene CreateScene(SceneKind kind)
         {
             IScene scene;
@@ -156,6 +130,92 @@ namespace WATP
             return scene;
         }
 
+        /// <summary>
+        /// 현재 Scene load
+        /// </summary>
+        private async UniTask<bool> LoadNowScene(IScene scene)
+        {
+            try
+            {
+                //unity scene
+                if (scene.GetSceneAssetName() != null)
+                {
+                    var operation = SceneManager.LoadSceneAsync(scene.GetSceneAssetName());
+                    operation.allowSceneActivation = false;
+                    operation.completed += (op) =>
+                    {
+                        SceneCameraSetting(SceneManager.GetSceneByName(scene.GetSceneAssetName()));
+                    };
+
+                    while (operation != null && operation.progress < 0.9f)
+                    {
+                        Progress = operation.progress;
+                        onSceneChangeProgress?.Invoke(Progress);
+                        await UniTask.Yield(cancellationToken: token.Token);
+                    }
+
+                    if (token.Token.IsCancellationRequested)
+                        return false;
+
+                    Progress = operation.progress;
+                    operation.allowSceneActivation = true;
+                    while (operation != null && !operation.isDone)
+                        await UniTask.Yield(cancellationToken: token.Token);
+
+                    if (token.Token.IsCancellationRequested)
+                        return false;
+                }
+
+                await scene.Load(token);
+                return true;
+            }
+            catch (Exception e)
+            {
+                throw new OperationCanceledException("Load Scene Error");
+            }
+        }
+
+        /// <summary>
+        /// 현재 Scene Unload
+        /// </summary>
+        private async UniTask<bool> UnloadScene()
+        {
+            try
+            {
+                if (nowScene != null)
+                {
+                    await nowScene.Unload(token);
+
+                    if (nowScene.GetSceneAssetName() != null)
+                    {
+                        var beforeOp = SceneManager.UnloadSceneAsync(nowScene.GetSceneAssetName());
+
+                        if (beforeOp.isDone != true)
+                            await UniTask.Yield(cancellationToken: token.Token);
+                    }
+                }
+
+                if (token.Token.IsCancellationRequested)
+                    return false;
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                throw new OperationCanceledException("UnLoad Scene Error");
+            }
+        }
+
+        /// <summary>
+        /// Resource Unload
+        /// </summary>
+        private async UniTask UnloadResource()
+        {
+            var unLoadResourceop = Resources.UnloadUnusedAssets();
+            if (unLoadResourceop.isDone != true)
+                await UniTask.Yield(cancellationToken: token.Token);
+        }
+
 
         /// <summary>
         /// scene에 존재하는 카메라의 고정 해상도를 처리한다
@@ -172,7 +232,7 @@ namespace WATP
                 }
             }
         }
-      
+
         #endregion
     }
 }

@@ -1,6 +1,8 @@
+using Unity.Entities;
+
 namespace WATP.ECS
 {
-    public interface IShopObjectComponent : IComponent
+    public struct ShopObjectComponent : IComponentData
     {
     }
 }

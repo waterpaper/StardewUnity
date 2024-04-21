@@ -1,9 +1,12 @@
+using WATP.ECS;
+
 namespace WATP.View
 {
     public interface IGridView
     {
         void SetGridView(bool view);
     }
+
     /// <summary>
     /// <see cref="View"/>의 인터페이스 입니다.
     /// </summary>
@@ -27,7 +30,7 @@ namespace WATP.View
 
 
         void Render();
-
+        void ReRef(IWATPObjectAspect aspect);
         void Dispose();
 
         void SetMultiply(float multiply);

@@ -1,18 +1,23 @@
-using Cysharp.Threading.Tasks;
+using System;
+using Unity.Entities;
 using UnityEngine;
 using UnityEngine.Profiling;
 using WATP.ECS;
-using WATP.Map;
-using WATP.UI;
 using WATP.View;
 
 namespace WATP
 {
+    /// <summary>
+    /// 게임 최상단 mono
+    /// game object에 게임별 root를 추가해서 게임을 실행한다.
+    /// </summary>
     public class StardewValleyRoot : Root
     {
         ViewManager viewManager;
-        ECSManager ecsManager;
         MapObjectManager mapObjectManager;
+
+        //getter
+        public static MapObjectManager MapObjectManager => (root as StardewValleyRoot).mapObjectManager;
 
         protected override void Awake()
         {
@@ -26,13 +31,10 @@ namespace WATP
 
         protected void Start()
         {
-            ecsManager = new ECSManager();
             viewManager = new ViewManager();
             mapObjectManager = new MapObjectManager();
 
-            ecsManager.Initialize();
-            viewManager.Initialize();
-            mapObjectManager.Init();
+            GameInit();
 
             SceneLoader.onSceneChangeStart += OnSceneChangeEvent;
             SceneLoader.SceneLoad(SceneKind.Splash);
@@ -42,19 +44,26 @@ namespace WATP
         {
             base.Update();
 
-            if (State.logicState.Value != LogicState.Normal) return;
-
             GameUpdate(Time.deltaTime);
-            viewManager.Render();
         }
 
         protected override void LateUpdate()
         {
             base.LateUpdate();
+            viewManager.Render();
         }
 
         private void OnDestroy()
         {
+            State.Dispose();
+            mapObjectManager.Dispose();
+        }
+
+        protected void GameInit()
+        {
+            State.Init();
+            viewManager.Initialize();
+            mapObjectManager.Init();
         }
 
         /// <summary>
@@ -63,19 +72,18 @@ namespace WATP
         /// </summary>
         protected void GameUpdate(double deltaTime)
         {
-            if (State.logicState.Value != LogicState.Normal) return;
-
-            /* try
-             {*/
-            Profiler.BeginSample($"play");
-            Root.State.TimeUpdate((float)deltaTime);
-            ecsManager.Simulation(deltaTime);
-            Profiler.EndSample();
-            /* }
-             catch (Exception e)
-             {
-                 FGBConsole.Log(e);
-             }*/
+            try
+            {
+                Profiler.BeginSample($"play");
+                mapObjectManager.Update();
+                if (State.logicState.Value == LogicState.Normal)
+                    Root.State.TimeUpdate((float)deltaTime);
+                Profiler.EndSample();
+            }
+            catch (Exception e)
+            {
+                Debug.Log(e);
+            }
 
         }
 

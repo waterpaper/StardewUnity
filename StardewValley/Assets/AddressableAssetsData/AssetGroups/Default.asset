@@ -20,7 +20,8 @@ MonoBehaviour:
   - m_GUID: 14a09fcd8a208564fa5c0ad618c88e83
     m_Address: Address
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - default
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: d7eabc7c2a925d74d8fde0a41fef5ad1, type: 2}

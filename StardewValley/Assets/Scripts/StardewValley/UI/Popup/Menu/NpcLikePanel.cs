@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using WATP.Data;
 
 namespace WATP.UI
 {
@@ -60,9 +58,15 @@ namespace WATP.UI
             for (int i = 0; i < likeObjs.Count; i++)
             {
                 if (point > i)
+                {
+                    likeObjs[i].transform.GetChild(0).gameObject.SetActive(true);
                     likeObjs[i].transform.GetChild(1).gameObject.SetActive(false);
+                }
                 else
+                {
                     likeObjs[i].transform.GetChild(0).gameObject.SetActive(false);
+                    likeObjs[i].transform.GetChild(1).gameObject.SetActive(true);
+                }
             }
         }
     }

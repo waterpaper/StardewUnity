@@ -1,5 +1,5 @@
+using Cysharp.Threading.Tasks;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -9,7 +9,12 @@ using WATP.UI;
 
 
 namespace WATP.Map
-{ 
+{
+    /// <summary>
+    /// 전체 타일맵을 관리하는 클래스
+    /// 초기 생성자를 통해 기본 오브젝트를 생성한다.
+    /// GridMap을 통해 화면에 옵션을 출력하며 tileMap을 layer 별로 관리한다.
+    /// </summary>
     public class TileMapManager
     {
         private string mapName;
@@ -52,7 +57,6 @@ namespace WATP.Map
                 }
             }
 
-            this.gridMap.SetTileMapManager(this);
             Root.State.month.onChange += OnMonthChange;
         }
 
@@ -75,34 +79,34 @@ namespace WATP.Map
         }
 
 
-        public void MapSetting(string mapName, int month = 1)
+        public async UniTask MapSetting(string mapName, int month = 1)
         {
-            if (File.Exists(Application.dataPath + $"/Resources/Map/{mapName}.dat") == false)
+            var load = Resources.Load<TextAsset>($"Map/{mapName}");
+            if (load == null)
             {
                 Debug.Log("not file!");
                 return;
             }
 
             onMapChangeStart?.Invoke(mapName);
+            await UniTask.Delay(100);
             BinaryFormatter bf = new BinaryFormatter();
-            FileStream file = File.Open(Application.dataPath + $"/Resources/Map/{mapName}.dat", FileMode.Open);
+            MemoryStream stream = new MemoryStream(load.bytes);
             SaveForm mapSaveData = null;
             try
             {
-                var str = (string)bf.Deserialize(file);
+                var str = (string)bf.Deserialize(stream);
                 mapSaveData = Json.JsonToObject<SaveForm>(str);
-                file.Close();
             }
             catch (Exception e)
             {
                 Debug.Log("error!");
-                file.Close();
                 onMapChangeEnd?.Invoke("");
                 return;
             }
 
             for (int i = 0; i < mapSaveData.tilemaps.Count || i < tileMaps.Count; i++)
-                tileMaps[i].MapSetting(mapSaveData.tilemaps[i], month);
+                await tileMaps[i].MapSetting(mapSaveData.tilemaps[i], month);
 
             gridMap.SetSize(tileMaps[0].MapX, tileMaps[0].MapY);
 
@@ -218,7 +222,7 @@ namespace WATP.Map
 
         public void OnMonthChange(int month)
         {
-            MapSetting(mapName, month);
+            MapSetting(mapName, month).Forget();
         }
     }
 }

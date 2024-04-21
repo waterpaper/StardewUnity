@@ -1,22 +1,20 @@
-using UnityEngine;
+using Unity.Entities;
+using Unity.Mathematics;
 
 namespace WATP.ECS
 {
-    public interface IPhysicsComponent : IComponent, ITransformComponent
-    {
-        public PhysicsComponent PhysicsComponent { get; }
-    }
-
-    [System.Serializable]
-    public class PhysicsComponent
+    /// <summary>
+    /// 물리 component
+    /// </summary>
+    public struct PhysicsComponent : IComponentData
     {
         /// <summary> 움직임 가능여부 </summary>
-        [SerializeField] public bool isEnable = true;
+        public bool isEnable;
 
         /// <summary> 현재 이동 속도 /// </summary>
-        [SerializeField] public Vector3 velocity;
+        public float3 velocity;
 
         /// <summary> 무게 /// </summary>
-        [SerializeField] public float weight;
+        public float weight;
     }
 }

@@ -2,6 +2,9 @@ using UnityEngine;
 
 namespace WATP
 {
+    /// <summary>
+    /// 고정 카메라 해상도 처리
+    /// </summary>
     public class CameraResolution : MonoBehaviour
     {
         private void Awake()

@@ -6,6 +6,10 @@ using System.Linq;
 
 namespace WATP.Data
 {
+    /// <summary>
+    /// game에 필요한 전체 데이터를 로드하여 미리 저장한다.
+    /// json data를 이용하며 load process에 추가하는 방식으로 이용한다.
+    /// </summary>
     public partial class TableData
     {
         Dictionary<int, AnimalTableData> animalTables = new();

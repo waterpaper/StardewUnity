@@ -1,15 +1,10 @@
+using Unity.Entities;
+
 namespace WATP.ECS
 {
-    public interface IDataComponent : IComponent
+    public struct DataComponent : IComponentData
     {
-        public DataComponent DataComponent { get; }
-    }
-
-    [System.Serializable]
-    public class DataComponent
-    {
-        public int datauid;
+        public int dataUid;
         public int id;
     }
-
 }

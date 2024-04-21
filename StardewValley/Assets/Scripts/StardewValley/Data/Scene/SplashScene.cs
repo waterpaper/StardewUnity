@@ -1,10 +1,12 @@
 using Cysharp.Threading.Tasks;
-using System;
-using System.Collections;
+using System.Threading;
 using WATP.UI;
 
 namespace WATP
 {
+    /// <summary>
+    /// custom splash ¾À
+    /// </summary>
     public class SplashScene : GameSceneBase
     {
         public override void Init()
@@ -15,19 +17,14 @@ namespace WATP
         {
         }
 
-        public override IEnumerator Load()
+        public async override UniTask Load(CancellationTokenSource cancellationToken)
         {
-            yield return OpenSplashPage();
-        }
-
-        public override IEnumerator Unload()
-        {
-            yield return null;
+            await OpenSplashPage();
         }
 
         public override bool IsLoadingPage => false;
 
-        private async UniTaskVoid OpenSplashPage()
+        private async UniTask OpenSplashPage()
         {
             var splashPage = new SplashScreen();
             splashPage = await Root.UIManager.Widgets.CreateAsync<SplashScreen>(splashPage, SplashScreen.DefaultPrefabPath);

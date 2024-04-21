@@ -4,7 +4,7 @@ using WATP.ECS;
 
 namespace WATP.View
 {
-    public class NpcView : View<NpcEntity>, IGridView
+    public class NpcView : View<NpcAspect>, IGridView
     {
         protected bool isHide = false;
 
@@ -15,31 +15,28 @@ namespace WATP.View
 
         protected Animator bodyAnim;
         protected SpriteRenderer rect;
+        protected EventActionComponent eventActionComponent;
 
 
-        public NpcView(NpcEntity npc, Transform parent)
+        public NpcView(NpcAspect npc, EventActionComponent eventActionComponent, Transform parent)
         {
             entity = npc;
             Parent = parent;
 
             PrefabPath = $"Address/Prefab/Character/NPC.prefab";
-            entity.EventComponent.onEvent += StateAction;
+            this.eventActionComponent = eventActionComponent;
+            this.uid = entity.Index;
         }
 
         protected override void OnLoad()
         {
-            this.uid = entity.UID;
-
-            Transform.position = entity.TransformComponent.position;
+            Transform.position = entity.Position;
 
             bodySpriteRenderer = Transform.GetChild(0).GetChild(0).GetComponent<SpriteRenderer>();
             bodyAnim = Transform.GetChild(0).GetChild(0).GetComponent<Animator>();
 
             rect = Transform.GetChild(0).GetChild(1).GetComponent<SpriteRenderer>();
-#if UNITY_EDITOR
-            /*  var giz = trs.gameObject.AddComponent<PRSUnitGizmo>();
-              giz.unit = smlUnit;*/
-#endif
+
             var tablaData = Root.GameDataManager.TableData.GetNPCTableData(this.entity.DataComponent.id);
             Transform.gameObject.name = tablaData.Name_En;
 
@@ -47,24 +44,25 @@ namespace WATP.View
             bodyAnim.SetInteger("Direction", 2);
             SetAnimMultiply(multiply);
             rect.gameObject.SetActive(Root.GameDataManager.Preferences.IsGrid);
+            eventActionComponent.OnEvent += StateAction;
         }
 
         protected override void OnDestroy()
         {
-            entity.EventComponent.onEvent -= StateAction;
+            eventActionComponent.OnEvent -= StateAction;
+            eventActionComponent = null;
             var tablaData = Root.GameDataManager.TableData.GetNPCTableData(this.entity.DataComponent.id);
             AssetLoader.Unload($"Address/Anim/NPC/{tablaData.Name_En}Body.controller", bodyAnim.runtimeAnimatorController);
 
-            entity = null;
-            //EventManager.Instance.SendEvent(new SoundDefaultEvent("UnitDeath"));
+            entity = default;
         }
 
         protected override void OnRender()
         {
-            if (entity == null) return;
+            if (entity.Equals(default)) return;
             if (Transform == null) return;
 
-            Transform.position = entity.TransformComponent.position;
+            Transform.position = entity.Position;
         }
 
         public override void SetMultiply(float multiply)
@@ -82,33 +80,33 @@ namespace WATP.View
             SetAnimMultiply(0);
         }
 
-        void StateAction(string str)
+        void StateAction(int state)
         {
-            if (entity == null || entity.DeleteReservation || isPrefab == false) return;
+            if (entity.Equals(default) || entity.DeleteComponent.isDelate || isPrefab == false) return;
 
-            switch (str)
+            switch (state)
             {
-                case "Idle":
+                case (int)EventKind.Idle:
                     bodyAnim.SetFloat("Speed", 0);
                     break;
-                case "Move":
-                    bodyAnim.SetFloat("Speed", entity.MoveComponent.speed);
+                case (int)EventKind.Move:
+                    bodyAnim.SetFloat("Speed", entity.Speed);
                     break;
-                case "Direction":
+                case (int)EventKind.Direction:
                     int direction = 1;
 
-                    if (entity.TransformComponent.rotation == Vector3.up)
+                    if ((Vector3)entity.Rotation == Vector3.up)
                         direction = (int)EDirection.DIRECTION_UP;
-                    else if (entity.TransformComponent.rotation == Vector3.down)
+                    else if ((Vector3)entity.Rotation == Vector3.down)
                         direction = (int)EDirection.DIRECTION_DOWN;
-                    else if (entity.TransformComponent.rotation == Vector3.left)
+                    else if ((Vector3)entity.Rotation == Vector3.left)
                         direction = (int)EDirection.DIRECTION_LEFT;
-                    else if (entity.TransformComponent.rotation == Vector3.right)
+                    else if ((Vector3)entity.Rotation == Vector3.right)
                         direction = (int)EDirection.DIRECTION_RIGHT;
 
                     bodyAnim.SetInteger("Direction", direction);
                     break;
-                case "MoveEnd":
+                case (int)EventKind.MoveEnd:
                     bodyAnim.SetFloat("Speed", 0);
                     break;
             }

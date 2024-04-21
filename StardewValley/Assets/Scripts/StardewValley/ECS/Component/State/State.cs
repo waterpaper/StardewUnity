@@ -1,3 +1,5 @@
+using Unity.Entities;
+
 namespace WATP.ECS
 {
     public static class StateType
@@ -13,16 +15,19 @@ namespace WATP.ECS
     {
         public string Name { get; protected set; } = StateType.Idle;
 
-        public void Enter(IFsmComponent entity, float frameTime)
+        public void Enter(Entity entity, float frameTime)
         {
-            entity.EventComponent.onEvent?.Invoke(StateType.Idle);
+            if (World.DefaultGameObjectInjectionWorld.EntityManager.HasComponent<EventComponent>(entity) == false) return;
+            var eventAspect = World.DefaultGameObjectInjectionWorld.EntityManager.GetAspect<EventAspect>(entity);
+
+            eventAspect.EventComponent.events.Add(new EventBuffer() { value = (int)EventKind.Idle });
         }
 
-        public void Exit(IFsmComponent entity, float frameTime)
+        public void Exit(ref Entity entity, float frameTime)
         {
         }
 
-        public void Stay(IFsmComponent entity, float frameTime)
+        public void Stay(ref Entity entity, float frameTime)
         { }
     }
 
@@ -30,17 +35,20 @@ namespace WATP.ECS
     {
         public string Name { get; protected set; } = StateType.Move;
 
-        public void Enter(IFsmComponent entity, float frameTime)
+        public void Enter(Entity entity, float frameTime)
         {
         }
 
-        public void Exit(IFsmComponent entity, float frameTime)
+        public void Exit(ref Entity  entity, float frameTime)
         {
         }
 
-        public void Stay(IFsmComponent entity, float frameTime)
+        public void Stay(ref Entity entity, float frameTime)
         {
-            entity.EventComponent.onEvent?.Invoke(StateType.Move);
+            if (World.DefaultGameObjectInjectionWorld.EntityManager.HasComponent<EventComponent>(entity) == false) return;
+            var eventAspect = World.DefaultGameObjectInjectionWorld.EntityManager.GetAspect<EventAspect>(entity);
+
+            eventAspect.EventComponent.events.Add(new EventBuffer() { value = (int)EventKind.Move });
         }
     }
 
@@ -50,25 +58,29 @@ namespace WATP.ECS
         public float Timer { get; protected set; } = 0;
         public string Name { get; protected set; } = StateType.Action;
 
-        public void Enter(IFsmComponent entity, float frameTime)
+        public void Enter(Entity entity, float frameTime)
         {
-            var farmer = entity as FarmerEntity;
-            farmer.MoveInputComponent.isEnable = false;
-            farmer.InteractionInputComponent.isEnable = false;
+            if (World.DefaultGameObjectInjectionWorld.EntityManager.HasComponent<PlayerComponent>(entity) == false) return;
+            var farmerAspect = World.DefaultGameObjectInjectionWorld.EntityManager.GetAspect<FarmerAspect>(entity);
+
+            farmerAspect.MoveInputComponentEnable = true;
+            farmerAspect.InteractionInputComponentEnable = true;
             Timer = 0;
-            entity.EventComponent.onEvent?.Invoke(StateType.Action);
+            farmerAspect.EventComponent.events.Add(new EventBuffer() { value = (int)EventKind.Action });
         }
 
-        public void Exit(IFsmComponent entity, float frameTime)
+        public void Exit(ref Entity entity, float frameTime)
         {
-            var farmer = entity as FarmerEntity;
-            farmer.MoveInputComponent.isEnable = true;
-            farmer.InteractionInputComponent.isEnable = true;
+            if (World.DefaultGameObjectInjectionWorld.EntityManager.HasComponent<PlayerComponent>(entity) == false) return;
+            var farmerAspect = World.DefaultGameObjectInjectionWorld.EntityManager.GetAspect<FarmerAspect>(entity);
+
+            farmerAspect.MoveInputComponentEnable = true;
+            farmerAspect.InteractionInputComponentEnable = true;
             Timer = 0;
-            entity.EventComponent.onEvent?.Invoke("ActionEnd");
+            farmerAspect.EventComponent.events.Add(new EventBuffer() { value = (int)EventKind.ActionEnd });
         }
 
-        public void Stay(IFsmComponent entity, float frameTime)
+        public void Stay(ref Entity entity, float frameTime)
         {
             Timer += frameTime;
         }
@@ -79,15 +91,15 @@ namespace WATP.ECS
     {
         public string Name { get; protected set; } = StateType.Dead;
 
-        public void Enter(IFsmComponent entity, float frameTime)
+        public void Enter(Entity entity, float frameTime)
         {
         }
 
-        public void Exit(IFsmComponent entity, float frameTime)
+        public void Exit(ref Entity entity, float frameTime)
         {
         }
 
-        public void Stay(IFsmComponent entity, float frameTime)
+        public void Stay(ref Entity entity, float frameTime)
         {
         }
     }

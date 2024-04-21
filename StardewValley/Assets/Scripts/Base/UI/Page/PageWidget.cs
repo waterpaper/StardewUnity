@@ -1,9 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
 using Cysharp.Threading.Tasks;
+using System.Threading;
 
 namespace WATP.UI
 {
+    /// <summary>
+    /// ±âº» ui page widget
+    /// </summary>
     public abstract class PageWidget : Widget
     {
         protected Button closeButton;
@@ -83,18 +87,18 @@ namespace WATP.UI
             PrefabPath = customPrefabPath;
 
             Initialize(obj.GetComponent<RectTransform>());
-             
+
             if (isDestroy)
                 return null;
 
             return obj.transform;
         }
 
-        public override async UniTask<Transform> LoadAsync(string customPrefabPath, Transform parent)
+        public override async UniTask<Transform> LoadAsync(string customPrefabPath, Transform parent, CancellationTokenSource cancellationToken = null)
         {
             this.parent = parent.GetComponent<RectTransform>();
 
-            var obj = await AssetLoader.InstantiateAsync(customPrefabPath, parent);
+            var obj = await AssetLoader.InstantiateAsync(customPrefabPath, parent, default, default, default, cancellationToken);
             name = obj.name;
             PrefabPath = customPrefabPath;
 
@@ -122,10 +126,10 @@ namespace WATP.UI
 
                 blurRect.anchoredPosition3D = new Vector3(blurRect.anchoredPosition.x, blurRect.anchoredPosition.y, 100f);
 
-               /* WATPImage blurImage = blurObject.AddComponent<WATPImage>();
-                blurImage.color = new Color(1, 1, 1, 1);
-                blurImage.material = BaseDataManager.BaseData.GetMaterial("BlurMaterial");
-                blurRect.SetAsFirstSibling();*/
+                /* WATPImage blurImage = blurObject.AddComponent<WATPImage>();
+                 blurImage.color = new Color(1, 1, 1, 1);
+                 blurImage.material = BaseDataManager.BaseData.GetMaterial("BlurMaterial");
+                 blurRect.SetAsFirstSibling();*/
             }
         }
 

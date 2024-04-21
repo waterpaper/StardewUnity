@@ -4,12 +4,12 @@ using WATP.ECS;
 
 namespace WATP.View
 {
-    public class FarmerView : View<FarmerEntity>, IGridView
+    public class FarmerView : View<FarmerAspect>, IGridView
     {
         protected bool isHide = false;
 
         protected float multiply = 1;
-        protected string nowState;
+        protected int nowState;
         protected int actionItemId;
         protected int actionType;
         protected bool actionSpriteUpdate = false;
@@ -31,22 +31,23 @@ namespace WATP.View
         protected Animator toolsAnim;
 
         protected AudioSource moveSource;
+        protected EventActionComponent eventActionComponent;
 
 
-        public FarmerView(FarmerEntity unit, Transform parent)
+        public FarmerView(FarmerAspect unit, EventActionComponent eventActionComponent, Transform parent)
         {
             entity = unit;
             Parent = parent;
 
             PrefabPath = $"Address/Prefab/Character/Farmer.prefab";
-            entity.EventComponent.onEvent += StateAction;
+            this.eventActionComponent = eventActionComponent;
+            this.uid = entity.Index;
         }
 
         protected override void OnLoad()
         {
-            this.uid = entity.UID;
             Transform.gameObject.name = "Farmer";
-            Transform.position = entity.TransformComponent.position;
+            Transform.position = entity.Position;
 
             bodySpriteRenderer = Transform.GetChild(0).GetChild(0).GetComponent<SpriteRenderer>();
             bodyAnim = Transform.GetChild(0).GetChild(0).GetComponent<Animator>();
@@ -74,30 +75,26 @@ namespace WATP.View
             SetPlayerCustom();
             SetAnimMultiply(multiply);
             rectRenderer.gameObject.SetActive(Root.GameDataManager.Preferences.IsGrid);
-#if UNITY_EDITOR
-            /*  var giz = trs.gameObject.AddComponent<PRSUnitGizmo>();
-              giz.unit = smlUnit;*/
-#endif
+            eventActionComponent.OnEvent += StateAction;
         }
 
         protected override void OnDestroy()
         {
             Root.State.inventory.selectIndex.onChange -= OnSelectItem;
-            entity.EventComponent.onEvent -= StateAction;
-            entity = null;
+            eventActionComponent.OnEvent -= StateAction;
+            entity = default;
             moveSource = null;
-
-            //EventManager.Instance.SendEvent(new SoundDefaultEvent("UnitDeath"));
+            eventActionComponent = null;
         }
 
         protected override void OnRender()
         {
-            if (entity == null) return;
+            if (entity.Equals(default)) return;
             if (Transform == null) return;
 
-            Transform.position = entity.TransformComponent.position;
+            Transform.position = entity.Position;
 
-            if (nowState == "Action" && actionSpriteUpdate == false)
+            if (nowState == (int)EventKind.Action && actionSpriteUpdate == false)
             {
                 if (actionType == 1 || actionType == 2 || actionType == 3)
                 {
@@ -106,9 +103,9 @@ namespace WATP.View
                         var itemTable = Root.GameDataManager.TableData.GetItemTableData(actionItemId);
                         var toolData = Root.GameDataManager.TableData.GetToolTableData(actionItemId);
                         int minus = 0;
-                        if (entity.TransformComponent.rotation == Vector3.up)
+                        if ((Vector3)entity.Rotation == Vector3.up)
                             minus = 1;
-                        else if (entity.TransformComponent.rotation == Vector3.down)
+                        else if ((Vector3)entity.Rotation == Vector3.down)
                             minus = 4;
                         else
                             minus = 3;
@@ -123,9 +120,9 @@ namespace WATP.View
                         var itemTable = Root.GameDataManager.TableData.GetItemTableData(actionItemId);
                         var toolData = Root.GameDataManager.TableData.GetToolTableData(actionItemId);
                         int minus = 0;
-                        if (entity.TransformComponent.rotation == Vector3.up)
+                        if ((Vector3)entity.Rotation == Vector3.up)
                             minus = 49;
-                        else if (entity.TransformComponent.rotation == Vector3.down)
+                        else if ((Vector3)entity.Rotation == Vector3.down)
                             minus = 52;
                         else
                             minus = 50;
@@ -152,13 +149,13 @@ namespace WATP.View
             SetAnimMultiply(0);
         }
 
-        void StateAction(string str)
+        void StateAction(int state)
         {
-            if (entity == null || entity.DeleteReservation || isPrefab == false) return;
+            if (entity.Equals(default) || entity.DeleteReservation || isPrefab == false) return;
 
-            switch (str)
+            switch (state)
             {
-                case "Idle":
+                case (int)EventKind.Idle:
                     bodyAnim.SetFloat("Speed", 0);
                     armAnim.SetFloat("Speed", 0);
                     pantsAnim.SetFloat("Speed", 0);
@@ -169,17 +166,17 @@ namespace WATP.View
                         moveSource = null;
                     }
                     break;
-                case "Move":
-                    bodyAnim.SetFloat("Speed", entity.MoveComponent.speed);
-                    armAnim.SetFloat("Speed", entity.MoveComponent.speed);
-                    pantsAnim.SetFloat("Speed", entity.MoveComponent.speed);
+                case (int)EventKind.Move:
+                    bodyAnim.SetFloat("Speed", entity.Speed);
+                    armAnim.SetFloat("Speed", entity.Speed);
+                    pantsAnim.SetFloat("Speed", entity.Speed);
                     if (moveSource == null)
                         moveSource = Root.SoundManager.PlaySound(SoundTrack.SFX, "move_soil", true);
                     break;
-                case "Direction":
+                case (int)EventKind.Direction:
                     int direction = 1;
 
-                    if (entity.TransformComponent.rotation == Vector3.up)
+                    if ((Vector3)entity.Rotation == Vector3.up)
                     {
                         direction = (int)EDirection.DIRECTION_UP;
                         hairSpriteRenderer.sprite = Root.GameDataManager.AtlasContainer.GetSheetSprite(Root.GameDataManager.AtlasContainer.FARMER_HAIR_PATH, $"FarmerHairs_{Root.State.player.hairIndex.Value - 1 + Config.CUSTOM_HAIR_MAX * 3}");
@@ -187,7 +184,7 @@ namespace WATP.View
 
                         toolRenderer.sortingOrder = -1;
                     }
-                    else if (entity.TransformComponent.rotation == Vector3.down)
+                    else if ((Vector3)entity.Rotation == Vector3.down)
                     {
                         direction = (int)EDirection.DIRECTION_DOWN;
                         hairSpriteRenderer.sprite = Root.GameDataManager.AtlasContainer.GetSheetSprite(Root.GameDataManager.AtlasContainer.FARMER_HAIR_PATH, $"FarmerHairs_{Root.State.player.hairIndex.Value - 1}");
@@ -195,7 +192,7 @@ namespace WATP.View
 
                         toolRenderer.sortingOrder = 11;
                     }
-                    else if (entity.TransformComponent.rotation == Vector3.left)
+                    else if ((Vector3)entity.Rotation == Vector3.left)
                     {
                         direction = (int)EDirection.DIRECTION_LEFT;
                         hairSpriteRenderer.sprite = Root.GameDataManager.AtlasContainer.GetSheetSprite(Root.GameDataManager.AtlasContainer.FARMER_HAIR_PATH, $"FarmerHairs_{Root.State.player.hairIndex.Value - 1 + Config.CUSTOM_HAIR_MAX * 2}");
@@ -203,7 +200,7 @@ namespace WATP.View
 
                         toolRenderer.sortingOrder = 11;
                     }
-                    else if (entity.TransformComponent.rotation == Vector3.right)
+                    else if ((Vector3)entity.Rotation == Vector3.right)
                     {
                         direction = (int)EDirection.DIRECTION_RIGHT;
                         hairSpriteRenderer.sprite = Root.GameDataManager.AtlasContainer.GetSheetSprite(Root.GameDataManager.AtlasContainer.FARMER_HAIR_PATH, $"FarmerHairs_{Root.State.player.hairIndex.Value - 1 + Config.CUSTOM_HAIR_MAX}");
@@ -217,12 +214,12 @@ namespace WATP.View
                     pantsAnim.SetInteger("Direction", direction);
                     toolsAnim.SetInteger("Direction", direction);
                     break;
-                case "MoveEnd":
+                case (int)EventKind.MoveEnd:
                     bodyAnim.SetFloat("Speed", 0);
                     armAnim.SetFloat("Speed", 0);
                     pantsAnim.SetFloat("Speed", 0);
                     break;
-                case "Action":
+                case (int)EventKind.Action:
                     toolRenderer.sprite = null;
                     var item = Root.State.inventory.SelectItem;
                     var itemTable = Root.GameDataManager.TableData.GetItemTableData(item.itemId);
@@ -230,7 +227,7 @@ namespace WATP.View
                     actionType = toolData.Type;
                     actionItemId = item.itemId;
 
-                    var cell = Root.SceneLoader.TileMapManager.GetCell((int)entity.UsingInputComponent.targetPos.x, (int)entity.UsingInputComponent.targetPos.y);
+                    var cell = Root.SceneLoader.TileMapManager.GetCell((int)entity.TargetPostion.x, (int)entity.TargetPostion.y);
 
                     if (cell != null)
                     {
@@ -246,9 +243,9 @@ namespace WATP.View
                         toolsAnim.SetBool("IsSmash", true);
 
                         int minus = 0;
-                        if (entity.TransformComponent.rotation == Vector3.up)
+                        if ((Vector3)entity.Rotation == Vector3.up)
                             minus = 2;
-                        else if (entity.TransformComponent.rotation == Vector3.down)
+                        else if ((Vector3)entity.Rotation == Vector3.down)
                             minus = 5;
                         else
                             minus = 3;
@@ -261,9 +258,9 @@ namespace WATP.View
                         pantsAnim.SetBool("IsWatering", true);
                         toolsAnim.SetBool("IsWatering", true);
                         int minus = 0;
-                        if (entity.TransformComponent.rotation == Vector3.up)
+                        if ((Vector3)entity.Rotation == Vector3.up)
                             minus = 49;
-                        else if (entity.TransformComponent.rotation == Vector3.down)
+                        else if ((Vector3)entity.Rotation == Vector3.down)
                             minus = 53;
                         else
                             minus = 51;
@@ -279,7 +276,7 @@ namespace WATP.View
                         actionSpriteUpdate = false;
                     }
                     break;
-                case "ActionEnd":
+                case (int)EventKind.ActionEnd:
                     if (actionType == 1 || actionType == 2 || actionType == 3)
                     {
                         bodyAnim.SetBool("IsSmash", false);
@@ -307,19 +304,19 @@ namespace WATP.View
                     toolRenderer.sprite = null;
                     targetRenderer.gameObject.SetActive(false);
                     break;
-                case "Take":
+                case (int)EventKind.Take:
                     bodyAnim.SetBool("IsTake", true);
                     armAnim.SetBool("IsTake", true);
                     pantsAnim.SetBool("IsTake", true);
                     break;
-                case "TakeEnd":
+                case (int)EventKind.TakeEnd:
                     bodyAnim.SetBool("IsTake", false);
                     armAnim.SetBool("IsTake", false);
                     pantsAnim.SetBool("IsTake", false);
                     break;
             }
 
-            nowState = str;
+            nowState = state;
         }
 
         public void SetPlayerCustom()
@@ -347,7 +344,7 @@ namespace WATP.View
             var selectItem = Root.State.inventory.SelectItem;
             if (selectItem == null)
             {
-                StateAction("TakeEnd");
+                StateAction((int)EventKind.TakeEnd);
                 itemRenderer.gameObject.SetActive(false);
                 itemRenderer.sprite = null;
                 return;
@@ -356,13 +353,13 @@ namespace WATP.View
             var itemTable = Root.GameDataManager.TableData.GetItemTableData(selectItem.itemId);
             if (itemTable.Type == (int)ECategory.CATEGORY_TOOL)
             {
-                StateAction("TakeEnd");
+                StateAction((int)EventKind.TakeEnd);
                 itemRenderer.gameObject.SetActive(false);
                 itemRenderer.sprite = null;
                 return;
             }
 
-            StateAction("Take");
+            StateAction((int)EventKind.Take);
             itemRenderer.gameObject.SetActive(true);
             itemRenderer.sprite = Root.GameDataManager.AtlasContainer.GetSheetSprite(itemTable.ImagePath, $"{itemTable.ImageName}_{itemTable.Index}");
         }

@@ -5,12 +5,14 @@ using WATP.Map;
 
 namespace WATP.UI
 {
+    /// <summary>
+    /// map에 
+    /// </summary>
     public class GridMap : MonoBehaviour
     {
         Tilemap tilemap;
 
         LineRenderer lr;
-        TileMapManager tileMapManager;
 
         List<WTileBase> tileBases = new();
         List<Vector3Int> positions = new();
@@ -30,6 +32,9 @@ namespace WATP.UI
             InitLineRenderer(lr);
             lr.sortingLayerName = "Grid";
             lr.sortingOrder = 1;
+            lr.startColor = Color.white;
+            lr.endColor = Color.white;
+            lr.material.shader = Shader.Find("Unlit/Texture");
 
             var obj = new GameObject($"[TileMap Grid]");
             obj.transform.SetParent(transform);
@@ -65,7 +70,6 @@ namespace WATP.UI
 
         private void OnDestroy()
         {
-            tileMapManager = null;
             Root.GameDataManager.Preferences.OnIsGridChange -= OnViewGrid;
         }
 
@@ -126,11 +130,6 @@ namespace WATP.UI
             if (lr == null) return;
             lr.positionCount = gridPos.Count;
             lr.SetPositions(gridPos.ToArray());
-        }
-
-        public void SetTileMapManager(TileMapManager tileMapManager)
-        {
-            this.tileMapManager = tileMapManager;
         }
 
         public void SetSize(int x, int y)

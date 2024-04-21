@@ -2,16 +2,24 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using WATP.ECS;
+using Unity.Entities;
+using System;
+using System.Threading;
 
 namespace WATP.View
 {
+    /// <summary>
+    /// entity의 해당되는 것중 view가 필요한 부분을 생성, 관리해주는 클래스
+    /// event로 통신 하여 관리한다.
+    /// </summary>
     public class ViewManager
     {
-        #region Property
         private Transform root;
+        private CancellationTokenSource cancellationToken = new CancellationTokenSource();
 
         protected Dictionary<int, IView> prsDic = new();
 
+        #region Property
         public Transform Root { get => root; }
 
         #endregion
@@ -25,23 +33,11 @@ namespace WATP.View
 
         public void Destroy()
         {
+            cancellationToken.Cancel();
+            cancellationToken.Dispose();
+
             Clear();
-
             UnBind();
-        }
-
-        private void Bind()
-        {
-            ECSController.ServiceEvents.On<EventCreateEntity>(OnEventCreateEntity);
-            ECSController.ServiceEvents.On<EventDeleteEntity>(OnEventDeleteEntity);
-            WATP.Root.GameDataManager.Preferences.OnIsGridChange += OnViewGrid;
-        }
-
-        private void UnBind()
-        {
-            ECSController.ServiceEvents.Off<EventCreateEntity>(OnEventCreateEntity);
-            ECSController.ServiceEvents.Off<EventDeleteEntity>(OnEventDeleteEntity);
-            WATP.Root.GameDataManager.Preferences.OnIsGridChange -= OnViewGrid;
         }
 
         public void Render()
@@ -59,85 +55,85 @@ namespace WATP.View
             return temp as T;
         }
 
-
-        public async void CreateObj(IEntity entityData)
+        private void Bind()
         {
-            IView prs = null;
-
-            if (entityData is FarmerEntity)
-            {
-                var eFarmer = entityData as FarmerEntity;
-                prs = new FarmerView(eFarmer, root);
-            }
-
-            else if (entityData is NpcEntity)
-            {
-                var eNpc = entityData as NpcEntity;
-                prs = new NpcView(eNpc, root);
-            }
-
-            else if (entityData is AnimalEntity)
-            {
-                var eAnimal = entityData as AnimalEntity;
-                prs = new AnimalView(eAnimal, root);
-            }
-
-            else if (entityData is HoedirtEntity)
-            {
-                var eHoe = entityData as HoedirtEntity;
-                prs = new HoedirtView(eHoe, root);
-            }
-
-            else if (entityData is CropsEntity)
-            {
-                var eCrops = entityData as CropsEntity;
-                prs = new CropsView(eCrops, root);
-            }
-            else if (entityData is MapObjectEntity)
-            {
-                var eMapObject = entityData as MapObjectEntity;
-                prs = new MapObjectView(eMapObject, root);
-            }
-
-            if (prs == null) return;
-            prsDic.Add(entityData.UID, prs);
-            ViewController.ServiceEvents.Emit(new ViewCreateEvent(prs));
-
-            var prefab = prs as IPrefabHandler;
-            await prefab.LoadAsync(prefab.PrefabPath, prefab.Parent);
+            ECSController.ServiceEvents.On<EventCreateEntity>(OnEventCreateEntity);
+            ECSController.ServiceEvents.On<EventDeleteEntity>(OnEventDeleteEntity);
+            ECSController.ServiceEvents.On<EventRefUpdate>(OnEventRefUpdate);
+            WATP.Root.GameDataManager.Preferences.OnIsGridChange += OnViewGrid;
         }
 
-        public void RemoveObj(IEntity entityData)
+        private void UnBind()
         {
-            Remove(entityData.UID);
+            ECSController.ServiceEvents.Off<EventCreateEntity>(OnEventCreateEntity);
+            ECSController.ServiceEvents.Off<EventDeleteEntity>(OnEventDeleteEntity);
+            ECSController.ServiceEvents.Off<EventRefUpdate>(OnEventRefUpdate);
+            WATP.Root.GameDataManager.Preferences.OnIsGridChange -= OnViewGrid;
         }
 
-        public void Remove(int id)
+        /// <summary>
+        /// ecs aspect를 view에 연결, 제작해주는 함수
+        /// </summary>
+        private async void CreateObj(IWATPObjectAspect entityData)
         {
-            if (prsDic.ContainsKey(id))
+            try
             {
-                ViewController.ServiceEvents.Emit(new ViewDeleteEvent(prsDic[id]));
+                IView prs = InitObj(entityData);
 
-                if (prsDic[id].IsAlreadyDisposed == false)
-                    prsDic[id].Dispose();
+                if (prs == null)
+                    throw new Exception("Not view manager init class");
+                
+                prsDic.Add(entityData.Index, prs);
+                ViewController.ServiceEvents.Emit(new ViewCreateEvent(prs));
 
-                prsDic.Remove(id);
+                var prefab = prs as IPrefabHandler;
+                await prefab.LoadAsync(prefab.PrefabPath, prefab.Parent, cancellationToken);
+            }
+            catch (Exception e)
+            {
+                throw new OperationCanceledException("Prefab(view) Load Error\n" + e);
             }
         }
 
-        public void ReadyGame(List<int> teamIndexs)
+        /// <summary>
+        /// aspect에 맞는 view 생성 및 component 연결
+        /// </summary>
+        private IView InitObj(IWATPObjectAspect entityData)
         {
-            for (int i = 0; i < root.childCount; i++)
-                GameObject.Destroy(root.GetChild(i).gameObject);
-
-            for (int i = 0; i < teamIndexs.Count; i++)
+            EventActionComponent eventActionComponent = World.DefaultGameObjectInjectionWorld.EntityManager.GetComponentObject<EventActionComponent>(entityData.Entity);
+            switch (entityData)
             {
-                GameObject temp = new GameObject($"Team {teamIndexs[i]}");
-                temp.transform.SetParent(root);
+                case FarmerAspect:
+                    return new FarmerView((FarmerAspect)entityData, eventActionComponent, root);
+                case NpcAspect:
+                    return new NpcView((NpcAspect)entityData, eventActionComponent, root);
+                case AnimalAspect:
+                    return new AnimalView((AnimalAspect)entityData, eventActionComponent, root);
+                case HoedirtAspect:
+                    return new HoedirtView((HoedirtAspect)entityData, eventActionComponent, root);
+                case CropsAspect:
+                    return new CropsView((CropsAspect)entityData, eventActionComponent, root);
+                case MapObjectAspect:
+                    return new MapObjectView((MapObjectAspect)entityData, eventActionComponent, root);
+            }
+
+            return null;
+        }
+
+        private void RemoveObj(IWATPObjectAspect entityData)
+        {
+            if (prsDic.ContainsKey(entityData.Index))
+            {
+                ViewController.ServiceEvents.Emit(new ViewDeleteEvent(prsDic[entityData.Index]));
+
+                if (prsDic[entityData.Index].IsAlreadyDisposed == false)
+                    prsDic[entityData.Index].Dispose();
+
+                prsDic.Remove(entityData.Index);
             }
         }
 
-        public void Clear()
+        private void Clear()
         {
             var prsList = prsDic.Values.ToList();
             foreach (var prs in prsList)
@@ -146,6 +142,8 @@ namespace WATP.View
             prsDic.Clear();
         }
 
+
+        #region time
 
         public void SetMultiply(float multiply)
         {
@@ -164,6 +162,7 @@ namespace WATP.View
             foreach (var prs in prsDic.Values)
                 prs.SetPause();
         }
+        #endregion
 
 
         #region event
@@ -178,12 +177,23 @@ namespace WATP.View
             RemoveObj(e.Entity);
         }
 
+        void OnEventRefUpdate(EventRefUpdate e)
+        {
+            foreach (var prs in prsDic.Values)
+            {
+                if (prs.UID == e.Entity.Index)
+                {
+                    prs.ReRef(e.Entity);
+                    break;
+                }
+            }
+        }
 
         private void OnViewGrid(bool grid)
         {
             foreach (var prs in prsDic.Values)
             {
-                if(prs is IGridView)
+                if (prs is IGridView)
                     (prs as IGridView).SetGridView(grid);
             }
         }

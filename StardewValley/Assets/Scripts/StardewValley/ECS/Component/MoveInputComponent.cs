@@ -1,16 +1,13 @@
-using UnityEngine;
+using Unity.Entities;
 
 namespace WATP.ECS
 {
-    public interface IMoveInputComponent : IComponent
-    {
-        public MoveInputComponent MoveInputComponent { get; }
-    }
-
-    [System.Serializable]
-    public class MoveInputComponent
+    /// <summary>
+    /// input 중 움직임 입력시 처리되야 하는 entity가 가진 component
+    /// </summary>
+    public struct MoveInputComponent : IComponentData
     {
         /// <summary> 가능여부 </summary>
-        [SerializeField] public bool isEnable = true;
+        public bool isEnable;
     }
 }

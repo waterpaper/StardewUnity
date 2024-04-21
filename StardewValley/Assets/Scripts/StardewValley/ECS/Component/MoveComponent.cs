@@ -1,22 +1,22 @@
-using UnityEngine;
+using Unity.Entities;
+using Unity.Mathematics;
 
 namespace WATP.ECS
 {
-    public interface IMoveComponent : IComponent, ITransformComponent, IEventComponent, IPhysicsComponent
-    {
-        public MoveComponent MoveComponent { get; }
-    }
-
-    [System.Serializable]
-    public class MoveComponent
+    /// <summary>
+    /// 움직이는 속성이 있는 entity가 가진 component
+    /// </summary>
+    public struct MoveComponent : IComponentData
     {
         /// <summary> 움직임 가능여부 </summary>
-        [SerializeField] public bool isEnable = true;
+        public bool isEnable;
         /// <summary> 목표 /// </summary>
-        [SerializeField] public Vector3 targetPos;
+        public float3 targetPos;
         /// <summary> 이전 포지션 /// </summary>
-        [SerializeField] public Vector3 beforePos;
+        public float3 beforePos;
         /// <summary> 현재 이동 속도 /// </summary>
-        [SerializeField] public float speed;
+        public float speed;
+        /// <summary> 이번 턴 움직임 유무 /// </summary>
+        public bool isMoveTurn;
     }
 }

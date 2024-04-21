@@ -1,26 +1,16 @@
-using UnityEngine;
+using Unity.Entities;
 
 namespace WATP.ECS
 {
-    public enum ColliderType
+    /// <summary>
+    /// 충돌 처리가 필요한 entity가 가진 compoenent
+    /// </summary>
+    public struct ColliderComponent : IComponentData
     {
-        None,
-        Circle,
-        Square,
-    }
-
-    public interface IColliderComponent : IComponent, ITransformComponent, IPhysicsComponent
-    {
-        public ColliderComponent ColliderComponent { get; }
-    }
-
-    [System.Serializable]
-    public class ColliderComponent
-    {
-        [SerializeField] public bool isEnable = true;
-        [SerializeField] public bool isCheck = false;
-        [SerializeField] public ColliderType colliderType = ColliderType.Square;
-        [SerializeField] public float areaWidth = 1;
-        [SerializeField] public float areaHeight = 1;
+        public bool isEnable;
+        public bool isCheck;
+        public int colliderType;
+        public float areaWidth;
+        public float areaHeight;
     }
 }

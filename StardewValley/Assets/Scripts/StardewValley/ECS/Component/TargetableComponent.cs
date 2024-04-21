@@ -1,15 +1,12 @@
-using UnityEngine;
+using Unity.Entities;
 
 namespace WATP.ECS
 {
-    public interface ITargetableComponent : IComponent
+    /// <summary>
+    /// targeting이 가능한 component
+    /// </summary>
+    public struct TargetableComponent : IComponentData
     {
-        public TargetableComponent TargetableComponent { get; }
-    }
-
-    [System.Serializable]
-    public class TargetableComponent
-    {
-        [SerializeField] public bool isEnable = true;
+        public bool isEnable;
     }
 }

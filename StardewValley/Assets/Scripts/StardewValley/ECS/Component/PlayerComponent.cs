@@ -1,12 +1,11 @@
+using Unity.Entities;
+
 namespace WATP.ECS
 {
-    public interface IPlayerComponent : IComponent, ITransformComponent, IEventComponent
-    {
-        public PlayerComponent PlayerComponent { get; }
-    }
-
-    [System.Serializable]
-    public class PlayerComponent
+    /// <summary>
+    /// player 를 나타내는 component
+    /// </summary>
+    public struct PlayerComponent : IComponentData
     {
         public bool value;
     }

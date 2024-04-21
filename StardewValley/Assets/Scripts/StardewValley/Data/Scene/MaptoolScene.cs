@@ -1,11 +1,12 @@
 using Cysharp.Threading.Tasks;
-using System;
-using System.Collections;
-using UnityEngine;
+using System.Threading;
 using WATP.UI;
 
 namespace WATP
 {
+    /// <summary>
+    /// Maptool ¾À
+    /// </summary>
     public class MaptoolScene : GameSceneBase
     {
         public override void Init()
@@ -18,19 +19,20 @@ namespace WATP
             Root.SoundManager.PlaySound(SoundTrack.BGM, "maptool", true);
         }
 
-        public override IEnumerator Load()
+        public async override UniTask Load(CancellationTokenSource cancellationToken)
         {
-            yield return OpenMaptoolPage();
+            await OpenMaptoolPage();
+            if (cancellationToken.IsCancellationRequested) return;
             Root.SceneLoader.TileMapManager.Clear();
         }
 
-        public override IEnumerator Unload()
+        public async override UniTask Unload(CancellationTokenSource cancellationToken)
         {
             Root.SceneLoader.TileMapManager.Clear();
-            yield return null;
+            await UniTask.Yield(cancellationToken: cancellationToken.Token);
         }
 
-        private async UniTaskVoid OpenMaptoolPage()
+        private async UniTask OpenMaptoolPage()
         {
             var ingamePage = new IngamePage();
             ingamePage = await Root.UIManager.Widgets.CreateAsync<IngamePage>(ingamePage, IngamePage.DefaultPrefabPath);

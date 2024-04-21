@@ -1,5 +1,3 @@
-// Addressable빌드용 코드
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,9 +8,13 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace WATP
 {
+    /// <summary>
+    /// Addressable빌드용 코드
+    /// 필요한 lable을 로드 할 수 있게 도와준다.
+    /// </summary>
     public class AddressableLoader : IResLoader
     {
-        readonly string[] downloadAssetsLabelKeys = { "Default", "Ingame" };
+        readonly string[] downloadAssetsLabelKeys = { };
 
         long downBytes = 0;
         long nowBytes = 0;
@@ -75,11 +77,11 @@ namespace WATP
              }*/
 #endif
 
-            var defaultOper = Addressables.DownloadDependenciesAsync("Default");
+            var defaultOper = Addressables.DownloadDependenciesAsync("default");
             while (!defaultOper.IsDone)
                 yield return null;
 
-            for (int i = 1; i < downloadAssetsLabelKeys.Length; i++)
+            for (int i = 0; i < downloadAssetsLabelKeys.Length; i++)
             {
                 var op = Addressables.GetDownloadSizeAsync(downloadAssetsLabelKeys[i]);
 

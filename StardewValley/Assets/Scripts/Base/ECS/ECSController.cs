@@ -1,3 +1,5 @@
+using Unity.Entities;
+
 namespace WATP.ECS
 {
     public class ECSController
@@ -22,11 +24,11 @@ namespace WATP.ECS
     //생성된 엔티티
     public class EventCreateEntity : IGameEvent
     {
-        private IEntity entity;
+        private IWATPObjectAspect entity;
 
-        public IEntity Entity { get => entity; }
+        public IWATPObjectAspect Entity { get => entity; }
 
-        public EventCreateEntity(IEntity entity)
+        public EventCreateEntity(IWATPObjectAspect entity)
         {
             this.entity = entity;
         }
@@ -36,21 +38,27 @@ namespace WATP.ECS
     //제거된 엔티티
     public class EventDeleteEntity : IGameEvent
     {
-        private IEntity entity;
+        private IWATPObjectAspect entity;
 
-        public IEntity Entity { get => entity; }
+        public IWATPObjectAspect Entity { get => entity; }
 
-        public EventDeleteEntity(IEntity entity)
+        public EventDeleteEntity(IWATPObjectAspect entity)
         {
             this.entity = entity;
         }
     }
 
-    //생성 루틴 요청
-    public class EventCreateRoutine : IGameEvent
+
+    //엔티티 업데이트
+    public class EventRefUpdate: IGameEvent
     {
-        public EventCreateRoutine()
+        private IWATPObjectAspect entity;
+
+        public IWATPObjectAspect Entity { get => entity; }
+
+        public EventRefUpdate(IWATPObjectAspect entity)
         {
+            this.entity = entity;
         }
     }
 

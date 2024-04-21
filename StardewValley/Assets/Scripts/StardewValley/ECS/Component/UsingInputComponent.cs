@@ -1,19 +1,17 @@
-using UnityEngine;
+using Unity.Entities;
+using Unity.Mathematics;
 
 namespace WATP.ECS
 {
-    public interface IUsingInputComponent : IComponent, ITransformComponent, IEventComponent
+    /// <summary>
+    /// input 중 아이템 사용 입력시 처리되야 하는 entity가 가진 component
+    /// </summary>
+    public struct UsingInputComponent : IComponentData
     {
-        public UsingInputComponent UsingInputComponent { get; }
-    }
-
-    [System.Serializable]
-    public class UsingInputComponent
-    {
-        [SerializeField] public bool isEnable = true;
-        [SerializeField] public bool isAction = false;
-        [SerializeField] public float actionTimer;
-        [SerializeField] public int actionType;
-        [SerializeField] public Vector3 targetPos;
+        public bool isEnable;
+        public bool isAction;
+        public float actionTimer;
+        public int actionType;
+        public float3 targetPos;
     }
 }

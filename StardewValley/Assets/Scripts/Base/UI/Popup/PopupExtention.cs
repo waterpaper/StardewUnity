@@ -4,12 +4,13 @@ using Cysharp.Threading.Tasks;
 
 namespace WATP.UI
 {
+    /// <summary>
+    /// popup 기반 확장 코드
+    /// </summary>
     public static class PopupExtention
     {
         public static T CreatePopup<T>(this PopupWidget popup, string popupName, bool isOpen, RectTransform popupRoot) where T : PopupWidget
         {
-            //EventManager.Instance.SendEvent(new OpenCircleLoadingEvent());
-
             var path = popup.PathDefault ? $"Address/Prefab/UI/Popup/{popupName}.prefab" : $"Address/Prefab/UI/Popup/{popupName}.prefab";
 
             var rect = popup.Load(path, popupRoot);
@@ -30,15 +31,11 @@ namespace WATP.UI
             else
                 popup.Hide();
 
-            //EventManager.Instance.SendEvent(new CloseCircleLoadingEvent());
-
             return popup as T;
         }
 
         public static async UniTask<T> CreatePopupAsync<T>(this PopupWidget popup, string popupName, bool isOpen, RectTransform popupRoot) where T : PopupWidget
         {
-            //EventManager.Instance.SendEvent(new OpenCircleLoadingEvent());
-
             var path = popup.PathDefault ? $"Address/Prefab/UI/Popup/{popupName}.prefab" : $"Address/Prefab/UI/Popup/{popupName}.prefab";
 
             var rect = await popup.LoadAsync(path, popupRoot);
@@ -58,8 +55,6 @@ namespace WATP.UI
                 popup.OpenPopup();
             else
                 popup.Hide();
-
-            //EventManager.Instance.SendEvent(new CloseCircleLoadingEvent());
 
             return popup as T;
         }

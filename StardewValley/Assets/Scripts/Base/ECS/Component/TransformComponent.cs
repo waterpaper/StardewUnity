@@ -1,16 +1,14 @@
-using UnityEngine;
+using Unity.Entities;
+using Unity.Mathematics;
 
 namespace WATP.ECS
 {
-    public interface ITransformComponent : IComponent
+    /// <summary>
+    /// 월드 기본값을 가지고 있는 component
+    /// </summary>
+    public struct TransformComponent :IComponentData
     {
-        public TransformComponent TransformComponent { get; }
-    }
-
-    [System.Serializable]
-    public class TransformComponent
-    {
-        [SerializeField] public Vector3 position;
-        [SerializeField] public Vector3 rotation;
+        public float3 position;
+        public float3 rotation;
     }
 }

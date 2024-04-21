@@ -4,9 +4,14 @@ using UnityEngine.UI;
 
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using System.Threading;
 
 namespace WATP.UI
 {
+    /// <summary>
+    /// 기본 ui popup widget
+    /// popupOption에 popup 이벤트 옵션들이 들어가있다.
+    /// </summary>
     public abstract class PopupWidget : Widget
     {
         protected Button closeButton;
@@ -75,11 +80,11 @@ namespace WATP.UI
             return obj.transform;
         }
 
-        public override async UniTask<Transform> LoadAsync(string customPrefabPath, Transform parent)
+        public override async UniTask<Transform> LoadAsync(string customPrefabPath, Transform parent, CancellationTokenSource cancellationToken = null)
         {
             this.parent = parent.GetComponent<RectTransform>();
 
-            var obj = await AssetLoader.InstantiateAsync(customPrefabPath, parent);
+            var obj = await AssetLoader.InstantiateAsync(customPrefabPath, parent, default, default, default, cancellationToken);
             name = obj.name;
             PrefabPath = customPrefabPath;
 

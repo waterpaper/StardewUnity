@@ -1,13 +1,8 @@
+using Unity.Entities;
+
 namespace WATP.ECS
 {
-
-    public interface ISightComponent : IComponent
-    {
-        public SightComponent SightComponent { get; }
-    }
-
-    [System.Serializable]
-    public class SightComponent
+    public struct SightComponent : IComponentData
     {
         public float value;
     }

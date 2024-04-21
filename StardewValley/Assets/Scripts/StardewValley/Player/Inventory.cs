@@ -1,15 +1,11 @@
 using System;
 using System.Collections.Generic;
 
-namespace WATP
+namespace WATP.Player
 {
-    public class ItemInfo
-    {
-        public int itemId;
-        public int itemQty;
-        public int itemIndex;
-    }
-    
+    /// <summary>
+    /// 플레이어 인벤트로 클래스
+    /// </summary>
     public class Inventory
     {
         public SubjectData<int> selectIndex;

@@ -1,9 +1,14 @@
 using System;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
+using System.Threading;
 
 namespace WATP.UI
 {
+    /// <summary>
+    /// widget의 기본 정보를 갖는 추상 클래스
+    /// 필요 함수를 override해 사용 가능하다.
+    /// </summary>
     public abstract class Widget : UIElement, IPrefabHandler
     {
         #region static
@@ -97,11 +102,11 @@ namespace WATP.UI
             return obj.transform;
         }
 
-        public virtual async UniTask<Transform> LoadAsync(string customPrefabPath, Transform parent)
+        public virtual async UniTask<Transform> LoadAsync(string customPrefabPath, Transform parent, CancellationTokenSource cancellationToken = null)
         {
             this.parent = parent.GetComponent<RectTransform>();
 
-            var obj = await AssetLoader.InstantiateAsync(customPrefabPath, parent);
+            var obj = await AssetLoader.InstantiateAsync(customPrefabPath, parent, default, default, default, cancellationToken);
             if(obj == null)
             {
                 throw new Exception("not prefab");

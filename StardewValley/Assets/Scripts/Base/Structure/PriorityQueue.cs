@@ -10,6 +10,9 @@ namespace WATP.Structure
         DESCENDING
     }
 
+    /// <summary>
+    /// 우선순위 queue
+    /// </summary>
     public class PriorityQueue<T> where T : IComparable
     {
         protected readonly List<T> _nodes = new List<T>();

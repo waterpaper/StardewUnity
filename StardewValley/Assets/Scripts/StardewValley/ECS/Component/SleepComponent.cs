@@ -1,15 +1,13 @@
+using Unity.Entities;
+
 namespace WATP.ECS
 {
-
-	public interface ISleepComponent : IComponent,ITransformComponent
-	{
-		public SleepComponent SleepComponent { get; }
-	}
-
-	[System.Serializable]
-	public class SleepComponent
-	{
-		public bool isArea = false;
+    /// <summary>
+    /// sleep event Ã³¸® component
+    /// </summary>
+	public struct SleepComponent : IComponentData
+    {
+		public bool isArea;
 	}
 
 }

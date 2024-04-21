@@ -1,13 +1,17 @@
-using System.Collections;
+using Cysharp.Threading.Tasks;
+using System.Threading;
 
 namespace WATP
 {
+    /// <summary>
+    /// 모든 씬(코드)의 기본 베이스
+    /// 만약 unity scene을 처리하려면 sceneloader에서 로드 프로세스 추가 필요
+    /// </summary>
     public interface IScene
     {
         void Init();
-        IEnumerator Load();
-
-        IEnumerator Unload();
+        UniTask Load(CancellationTokenSource cancellationToken);
+        UniTask Unload(CancellationTokenSource cancellationToken);
 
         void Complete();
 
@@ -25,16 +29,16 @@ namespace WATP
             UnityEngine.Debug.Log("Empty Scene Init");
         }
 
-        public IEnumerator Load()
+        public async UniTask Load(CancellationTokenSource cancellationToken)
         {
             UnityEngine.Debug.Log("Empty Scene Load");
-            yield return null;
+            await UniTask.Yield(cancellationToken: cancellationToken.Token);
         }
 
-        public IEnumerator Unload()
+        public async UniTask Unload(CancellationTokenSource cancellationToken)
         {
             UnityEngine.Debug.Log("Empty Scene Destroy");
-            yield return null;
+            await UniTask.Yield(cancellationToken: cancellationToken.Token);
         }
 
         public void Update()
@@ -64,14 +68,14 @@ namespace WATP
 
         public virtual bool IsLoadingPage => true;
 
-        public virtual IEnumerator Load()
+        public virtual UniTask Load(CancellationTokenSource cancellationToken)
         {
-            yield return null;
+            return UniTask.Yield(cancellationToken: cancellationToken.Token);
         }
 
-        public virtual IEnumerator Unload()
+        public virtual UniTask Unload(CancellationTokenSource cancellationToken)
         {
-            yield return null;
+            return UniTask.Yield(cancellationToken: cancellationToken.Token);
         }
 
         public virtual void Update()

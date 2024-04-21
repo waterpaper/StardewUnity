@@ -5,82 +5,11 @@ using UnityEngine;
 
 namespace WATP.Data
 {
-    [Serializable]
-    class LocalSaveTable
-    {
-        public int gameFrame;
-
-        public int bgm;
-        public int sfx;
-
-        public bool isBgm;
-        public bool isSfx;
-        public bool isAlarm;
-        public bool isGrid;
-
-        public LocalSaveTable()
-        {
-            gameFrame = 30;
-            bgm = 100;
-            sfx = 100;
-
-            isBgm = true;
-            isSfx = true;
-            isAlarm = false;
-            isGrid = true;
-        }
-    }
-
-    class LocalSaveData
-    {
-        public SubjectData<int> gameFrame;
-
-        public SubjectData<int> bgm;
-        public SubjectData<int> sfx;
-
-        public SubjectData<bool> isBgm;
-        public SubjectData<bool> isSfx;
-        public SubjectData<bool> isAlarm;
-        public SubjectData<bool> isGrid;
-
-        public LocalSaveData()
-        {
-            gameFrame.Value = 30;
-
-            bgm.Value = 100;
-            sfx.Value = 100;
-
-            isBgm.Value = true;
-            isSfx.Value = true;
-            isAlarm.Value = false;
-            isGrid.Value = true;
-        }
-
-        public LocalSaveData(LocalSaveTable saveTable)
-        {
-            gameFrame.Value = saveTable.gameFrame;
-
-            isBgm.Value = saveTable.isBgm;
-            isSfx.Value = saveTable.isSfx;
-            isAlarm.Value = saveTable.isAlarm;
-            isGrid.Value = saveTable.isGrid;
-        }
-
-        public LocalSaveTable SaveTable()
-        {
-            LocalSaveTable data = new LocalSaveTable();
-            data.gameFrame = gameFrame.Value;
-            data.bgm = bgm.Value;
-            data.sfx = sfx.Value;
-            data.isBgm = isBgm.Value;
-            data.isSfx = isSfx.Value;
-            data.isAlarm = isAlarm.Value;
-
-            return data;
-        }
-
-    }
-
+    /// <summary>
+    /// 환경설정을 관리하는 클래스
+    /// 기본 옵션값을 각 기기에 저장해서 사용한다.
+    /// 바이너리 파일로 save & load
+    /// </summary>
     public class Preferences
     {
         private LocalSaveData saveData;
@@ -120,9 +49,9 @@ namespace WATP.Data
             saveData = new LocalSaveData();
             simulationDeltaTime = Mathf.Round(1.0f / SimulationFrame * 10000) / 10000;
 
-#if !UNITY_EDITOR
-            Application.targetFrameRate = GameTargetFrame;
-#endif
+/*#if !UNITY_EDITOR
+            Application.targetFrameRate = GameFrame;
+#endif*/
         }
 
         public void SetGameFrame(int frame)

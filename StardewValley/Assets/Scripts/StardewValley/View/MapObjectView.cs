@@ -1,36 +1,37 @@
-using System;
 using UnityEngine;
-using WATP.Data;
 using WATP.ECS;
 
 namespace WATP.View
 {
-    public class MapObjectView : View<MapObjectEntity>, IGridView
+    public class MapObjectView : View<MapObjectAspect>, IGridView
     {
         protected float multiply = 1;
 
         protected SpriteRenderer spriteRenderer;
         protected Animator destroyAnim;
         protected SpriteRenderer rect;
+        protected EventActionComponent eventActionComponent;
 
 
-        public MapObjectView(MapObjectEntity mapObject, Transform parent)
+        public MapObjectView(MapObjectAspect mapObject, EventActionComponent eventActionComponent, Transform parent)
         {
             entity = mapObject;
             Parent = parent;
 
             PrefabPath = $"Address/Prefab/MapObject.prefab";
+            this.eventActionComponent = eventActionComponent;
+            this.uid = entity.Index;
         }
 
         protected override void OnLoad()
         {
-            this.uid = entity.UID;
+            this.uid = entity.Index;
 
-            Transform.position = entity.TransformComponent.position;
+            Transform.position = entity.Position;
             spriteRenderer = Transform.GetChild(0).GetChild(0).GetComponent<SpriteRenderer>();
             destroyAnim = Transform.GetChild(0).GetChild(1).GetComponent<Animator>();
             rect = Transform.GetChild(0).GetChild(2).GetComponent<SpriteRenderer>();
-            entity.EventComponent.onEvent += StateUpdate;
+            eventActionComponent.OnEvent += StateUpdate;
 
             destroyAnim.SetInteger("Id", entity.MapObjectDataComponent.id);
 
@@ -41,32 +42,27 @@ namespace WATP.View
 
             rect.transform.localScale = new Vector3(tableData.Width, tableData.Height, 1);
             rect.gameObject.SetActive(Root.GameDataManager.Preferences.IsGrid);
-
-#if UNITY_EDITOR
-            /*  var giz = trs.gameObject.AddComponent<PRSUnitGizmo>();
-              giz.unit = smlUnit;*/
-#endif
         }
 
         protected override void OnDestroy()
         {
-            entity.EventComponent.onEvent -= StateUpdate;
-            entity = null;
-            //EventManager.Instance.SendEvent(new SoundDefaultEvent("UnitDeath"));
+            eventActionComponent.OnEvent -= StateUpdate;
+            eventActionComponent = null;
+            entity = default;
         }
 
         protected override void OnRender()
         {
         }
 
-        void StateUpdate(string str)
+        void StateUpdate(int state)
         {
-            if (entity == null || entity.DeleteReservation || isPrefab == false) return;
-            switch (str)
+            if (entity.Equals(default) || entity.DeleteComponent.isDelate || isPrefab == false) return;
+            switch (state)
             {
-                case "Hit":
+                case (int)EventKind.Hit:
                     break;
-                case "Destroy":
+                case (int)EventKind.Destroy:
                     spriteRenderer.gameObject.SetActive(false);
                     destroyAnim.SetTrigger("Start");
 

@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -140,7 +141,7 @@ namespace WATP.UI
             var data = Json.ObjectToJson(saveData);
 
             BinaryFormatter bf = new BinaryFormatter();
-            FileStream file = File.Create(Application.dataPath + $"/Resources/Map/{fileNameInput.text}.dat");
+            FileStream file = File.Create(Application.dataPath + $"/Resources/Map/{fileNameInput.text}.bytes");
             bf.Serialize(file, data);
             file.Close();
             Debug.Log("Game data saved!");
@@ -151,7 +152,7 @@ namespace WATP.UI
             if (string.IsNullOrEmpty(fileNameInput.text))
                 return;
 
-            Root.SceneLoader.TileMapManager.MapSetting(fileNameInput.text);
+            Root.SceneLoader.TileMapManager.MapSetting(fileNameInput.text).Forget();
             cameraBounds.Setting((int)Root.SceneLoader.TileMapManager.TileSize.x, (int)Root.SceneLoader.TileMapManager.TileSize.y);
             sizeContainer.SetText((int)Root.SceneLoader.TileMapManager.TileSize.x, (int)Root.SceneLoader.TileMapManager.TileSize.y);
 

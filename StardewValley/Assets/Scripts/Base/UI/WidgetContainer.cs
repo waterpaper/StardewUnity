@@ -7,6 +7,11 @@ using UnityEngine.SceneManagement;
 
 namespace WATP.UI
 {
+    /// <summary>
+    /// UI Widget을 관리하는 container
+    /// 각 widget에 uid를 통해 관리하며
+    /// page와 popup, widget으로 나눠 관리한다.
+    /// </summary>
     public class WidgetContainer
     {
         private UIManager uiManager;
@@ -37,7 +42,6 @@ namespace WATP.UI
 
             sceneIndex = SceneManager.GetActiveScene().buildIndex;
             sceneWidgets.Add(sceneIndex, new());
-            //EventController.ServiceEvents.On<SceneLoadStartEvent>(SceneChange);
         }
 
         public void Destroy()
@@ -105,7 +109,6 @@ namespace WATP.UI
         /// </summary>
         /// <param name="customPrefabPath"> 기본 프리팹 네임 </param>
         /// <param name="isEnable"> 생성시 열지 안 열지 </param>
-        /// <typeparam name="T"></typeparam>
         /// <returns>생성된 위젯</returns>
         public T Create<T>(string customPrefabPath, RectTransform parent = null, bool isEnable = true, bool autoUnload = true)
             where T : Widget, new()
@@ -118,7 +121,6 @@ namespace WATP.UI
         /// </summary>
         /// <param name="customPrefabPath"> 기본 프리팹 네임 </param>
         /// <param name="isEnable"> 생성시 열지 안 열지 </param>
-        /// <typeparam name="T"></typeparam>
         /// <returns>생성된 위젯</returns>
         public T Create<T>(T widget, string customPrefabPath, RectTransform parent = null, bool isEnable = true, bool autoUnload = true)
             where T : Widget
@@ -170,7 +172,6 @@ namespace WATP.UI
         /// </summary>
         /// <param name="customPrefabPath"> 기본 프리팹 네임 </param>
         /// <param name="isEnable"> 생성시 열지 안 열지 </param>
-        /// <typeparam name="T"></typeparam>
         /// <returns>생성된 위젯</returns>
         public async UniTask<T> CreateAsync<T>(string customPrefabPath, RectTransform parent = null, bool isEnable = true, bool autoUnload = true)
             where T : Widget, new()
@@ -184,13 +185,12 @@ namespace WATP.UI
         /// </summary>
         /// <param name="customPrefabPath"> 기본 프리팹 네임 </param>
         /// <param name="isEnable"> 생성시 열지 안 열지 </param>
-        /// <typeparam name="T"></typeparam>
         /// <returns>생성된 위젯</returns>
         public async UniTask<T> CreateAsync<T>(T widget, string customPrefabPath, RectTransform parent = null, bool isEnable = true, bool autoUnload = true)
             where T : Widget
         {
-           /* try
-            {*/
+            try
+            {
                 waitCount++;
                 if (widget is PageWidget)
                 {
@@ -217,15 +217,16 @@ namespace WATP.UI
 
                 waitCount--;
                 return widget;
-           /* }
+           }
             catch (Exception e)
             {
                 UIController.ServiceEvents.Emit(new UIException() { exception = e });
 
                 waitCount--;
                 throw e;
-            }*/
+            }
         }
+
 
         private void CreatePageOption(PageWidget page)
         {

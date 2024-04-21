@@ -1,12 +1,9 @@
+using Unity.Entities;
+
 namespace WATP.ECS
 {
-    public interface ICropsDataComponent : IComponent, ITransformComponent, IEventComponent
-    {
-        public CropsDataComponent CropsDataComponent { get; }
-    }
-
-    [System.Serializable]
-    public class CropsDataComponent
+    /// data component
+    public struct CropsDataComponent : IComponentData
     {
         public int day;
         public int id;

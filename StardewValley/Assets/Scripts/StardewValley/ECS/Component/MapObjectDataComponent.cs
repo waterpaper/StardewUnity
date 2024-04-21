@@ -1,12 +1,11 @@
+using Unity.Entities;
+
 namespace WATP.ECS
 {
-    public interface IMapObjectDataComponent : IComponent, IColliderComponent, ITransformComponent, IDelayDeleteComponent, IEventComponent
-    {
-        public MapObjectDataComponent MapObjectDataComponent { get; }
-    }
-
-    [System.Serializable]
-    public class MapObjectDataComponent
+    /// <summary>
+    /// entity°¡ °¡Áø data component
+    /// </summary>
+    public struct MapObjectDataComponent : IComponentData
     {
         public int id;
         public int hp;

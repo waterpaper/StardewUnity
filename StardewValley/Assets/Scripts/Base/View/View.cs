@@ -3,11 +3,16 @@ using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using WATP.ECS;
 using UnityEngine;
+using System.Threading;
 
 namespace WATP.View
 {
+    /// <summary>
+    /// aspect를 화면에 표현해주는 class
+    /// 기본적으로는 prefab을 late load(비동기)한다.
+    /// </summary>
     [Serializable]
-    public abstract class View<T> : IView, IPrefabHandler where T : IEntity
+    public abstract class View<T> : IView, IPrefabHandler where T : IWATPObjectAspect
     {
         protected T entity;
         protected int uid;
@@ -35,16 +40,18 @@ namespace WATP.View
         protected abstract void OnRender();
         protected abstract void OnDestroy();
 
-        public virtual async UniTask<Transform> LoadAsync(string customPrefabPath, Transform parent)
+        public virtual async UniTask<Transform> LoadAsync(string customPrefabPath, Transform parent, CancellationTokenSource cancellationToken)
         {
             if (!isPrefab)
             {
                 PrefabPath = customPrefabPath ?? "";
                 Transform = new GameObject().transform;
                 Transform.SetParent(parent, true);
-                Transform.position = entity.TransformComponent.position;
+                Transform.position = entity.Position;
 
-                await AssetLoader.InstantiateAsync(PrefabPath, Transform);
+                await AssetLoader.InstantiateAsync(PrefabPath, Transform, default, default, default, cancellationToken);
+                if (cancellationToken.IsCancellationRequested) return null;
+
                 isPrefab = true;
 
                 if (!isAlreadyDisposed && entity != null)
@@ -60,7 +67,7 @@ namespace WATP.View
             {
                 Transform = new GameObject().transform;
                 Transform.SetParent(parent, true);
-                Transform.position = entity.TransformComponent.position;
+                Transform.position = entity.Position;
 
                 PrefabPath = customPrefabPath ?? "";
                 AssetLoader.Instantiate(PrefabPath, Transform);
@@ -94,8 +101,6 @@ namespace WATP.View
                 AssetLoader.Unload(PrefabPath, Transform == null || Transform.childCount == 0 ? null : Transform.GetChild(0).gameObject);
                 if (Transform != null)
                     GameObject.Destroy(Transform.gameObject);
-                /* if ((object)Transform.gameObject != null)
-                     UnityEngine.GameObject.Destroy(Transform.gameObject);*/
 
                 GC.SuppressFinalize(this);
             }
@@ -141,25 +146,32 @@ namespace WATP.View
             OnRender();
         }
 
+        public void ReRef(IWATPObjectAspect aspect)
+        {
+            if(uid != 0 && aspect.Index == uid)
+
+            this.entity = (T)aspect;
+        }
+
         /// <summary>
         /// 자신의 컴포넌트를 가져옵니다.<br/>
         /// OnLoad()이후에만 사용가능합니다.
         /// </summary>
         /// <typeparam name="T">찾을 컴포넌트</typeparam>
         /// <returns>찾은 컴포넌트</returns>
-        protected T GetComponent<T>()
-            where T : class
+        protected C GetComponent<C>()
+            where C : class
         {
             if (Transform == null)
             {
-                Debugger.LogWarning($"Please GetComponent<T>() do not used when not OnLoad().");
+                Debugger.LogWarning($"Please GetComponent<C>() do not used when not OnLoad().");
                 return default;
             }
 
-            var temp = Transform.GetComponent<T>();
+            var temp = Transform.GetComponent<C>();
             if (temp == null)
             {
-                Debugger.LogWarning($"{Transform.name} has no {typeof(T)} component");
+                Debugger.LogWarning($"{Transform.name} has no {typeof(C)} component");
                 return default;
             }
 
@@ -173,8 +185,8 @@ namespace WATP.View
         /// <param name="childName">자식의 이름</param>
         /// <typeparam name="T">찾을 컴포넌트</typeparam>
         /// <returns>찾은 컴포넌트</returns>
-        protected T GetChildComponent<T>(string childName)
-            where T : class
+        protected C GetChildComponent<C>(string childName)
+            where C : class
         {
             if (Transform == null)
             {
@@ -204,10 +216,10 @@ namespace WATP.View
                 return default;
             }
 
-            var temp = t.GetComponent<T>();
+            var temp = t.GetComponent<C>();
             if (temp == null)
             {
-                Debugger.LogWarning($"{Transform.name} has no {typeof(T)} component");
+                Debugger.LogWarning($"{Transform.name} has no {typeof(C)} component");
                 return default;
             }
 

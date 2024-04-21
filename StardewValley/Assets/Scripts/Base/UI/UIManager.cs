@@ -3,6 +3,10 @@ using UnityEngine.UI;
 
 namespace WATP.UI
 {
+    /// <summary>
+    /// UI를 총 관리해주는 매니저이자 모듈의 오픈부분
+    /// 게임 시작시 UI를 보여주기 위한 오브젝트를 생성하며 초기화한다.
+    /// </summary>
     public class UIManager
     {
         public const int MAX_ORDER = 9999;

@@ -82,7 +82,7 @@ namespace WATP.UI
             if (tableData == null || tableData.IsSell == 0)
                 return;
 
-            Root.State.inventory.RemoveInventory(index);
+            Root.State.inventory.RemoveInventory(item.itemId, 1);
             Root.State.player.money.Value += tableData.Sell;
         }
 

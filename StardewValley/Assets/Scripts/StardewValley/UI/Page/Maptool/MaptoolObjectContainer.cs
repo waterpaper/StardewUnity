@@ -1,4 +1,5 @@
 using System;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -51,12 +52,11 @@ namespace WATP.UI
         {
             var objData = Root.SceneLoader.TileMapManager.TileObjectAdd(x, y, index);
 
-            var mapObject = new WATP.ECS.MapObjectEntity.MapObjectEntityBuilder()
-                .SetPos(new Vector2(objData.posX, objData.posY))
+            var mapObject = new WATP.ECS.MapObjectAspectBuilder()
+                .SetPos(new float3(objData.posX, objData.posY, 0))
                 .SetId(objData.objectId);
 
             WATP.ECS.ECSController.ServiceEvents.Emit(new WATP.ECS.EventAddEntity(mapObject));
-            WATP.ECS.ECSController.ServiceEvents.Emit(new WATP.ECS.EventCreateRoutine());
         }
 
         void SetImageSetting()

@@ -115,12 +115,12 @@ namespace WATP.UI
         private void FadeOut()
         {
             fadeTimer += Time.deltaTime;
-            if (fadeTimer < 0.5f)
+            if (fadeTimer < 1.0f)
                 background.color = new Color(background.color.r, background.color.g, background.color.b, 1);
-            else if (fadeTimer < 1.5f)
+            else if (fadeTimer < 2.0f)
             {
                 loadingPanel.gameObject.SetActive(false);
-                background.color = new Color(background.color.r, background.color.g, background.color.b, 1 - fadeTimer / 1.5f);
+                background.color = new Color(background.color.r, background.color.g, background.color.b, 1 - fadeTimer / 2.0f);
 
                 if (isScene && Root.State.logicState.Value != LogicState.Normal)
                     Root.State.logicState.Value = LogicState.Normal;

@@ -1,5 +1,8 @@
 namespace WATP.Player
 {
+    /// <summary>
+    /// animal 정보 데이터
+    /// </summary>
     public class AnimalInfo
     {
         public int animalUid;

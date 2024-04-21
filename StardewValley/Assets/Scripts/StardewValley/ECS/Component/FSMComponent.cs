@@ -1,15 +1,16 @@
 using System.Collections.Generic;
+using Unity.Entities;
 
 namespace WATP.ECS
 {
-    public delegate bool FsmTransitionCondition();
+    public delegate bool FsmTransitionCondition(ref Entity entity);
     public interface IState
     {
         public string Name { get; }
 
-        public void Enter(IFsmComponent entity, float frameTime);
-        public void Stay(IFsmComponent entity, float frameTime);
-        public void Exit(IFsmComponent entity, float frameTime);
+        public void Enter(Entity entity, float frameTime);
+        public void Stay(ref Entity entity, float frameTime);
+        public void Exit(ref Entity entity, float frameTime);
     }
 
     internal class StateTransitions
@@ -22,10 +23,12 @@ namespace WATP.ECS
         }
     }
 
-    public interface IFsmComponent : IStateComponent
-    {
-    }
 
+    /// <summary>
+    /// entity가 fsm 처리 필요시 가지고 있는 component
+    /// 클래스 생성을 도와주는 FsmComponentBuilder를 이용하여
+    /// 각각의 state별 transition은 aspect에서 정의한다.
+    /// </summary>
     public class FsmComponent : StateComponent
     {
         public string NextState { get; set; } = "default";
@@ -101,7 +104,7 @@ namespace WATP.ECS
             /// FSM을 생성합니다.
             /// </summary>
             /// <returns></returns>
-            public FsmComponent Build(IFsmComponent entity)
+            public FsmComponent Build(Entity entity)
             {
                 FsmComponent component = new()
                 {
@@ -111,7 +114,7 @@ namespace WATP.ECS
                     NextState = DefaultState
                 };
 
-                component.States[DefaultState].Enter(entity, 0);
+                //component.States[DefaultState].Enter(entity, 0);
                 return component;
             }
         }

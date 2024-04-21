@@ -21,6 +21,10 @@ namespace WATP.Map
         None
     }
 
+    /// <summary>
+    /// cell 내부에 이미지 정보, 옵션정보를 가지며
+    /// 해당 정보를 가지고 tilemap(cell)을 구성한다.
+    /// </summary>
     public class Cell : IComparable
     {
         public string ImagePrefix { get; protected set; }
@@ -53,10 +57,9 @@ namespace WATP.Map
         public Cell LeftCell { get => NeighborCells.Count == 0 || LeftCellIndex == -1 ? null : NeighborCells[LeftCellIndex]; }
         public Cell RightCell { get => NeighborCells.Count == 0 || RightCellIndex == -1 ? null : NeighborCells[RightCellIndex]; }
 
-        public Cell(Vector2 position, int width, int height, float gridSize, char type, bool block)
+        public Cell(Vector2 position, float gridSize, char type, bool block)
         {
             Position = position + new Vector2(gridSize * 0.5f, gridSize * 0.5f);
-
             if (type == default)
             {
                 CellKind = CellKind.Cell;

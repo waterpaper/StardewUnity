@@ -1,20 +1,40 @@
 using Cysharp.Threading.Tasks;
 using System.Collections;
+using System.Threading;
+using Unity.Collections;
+using Unity.Entities;
 using UnityEngine;
 using WATP.ECS;
 using WATP.UI;
 
 namespace WATP
 {
+    /// <summary>
+    /// ingame 씬
+    /// ingame에 필요한 entity 및 class를 생성하고 설정을 도와준다.
+    /// 옵션 이벤트 처리를 담당한다.
+    /// </summary>
     public class IngameScene : GameSceneBase
     {
         MenuPopup menuPopup;
         IngameCameraBounds cameraBounds;
 
+        Entity uiShopEntity, uiDialogEntity, uiSleepEntity;
+
         public override void Init()
         {
             cameraBounds = new IngameCameraBounds();
             Bind();
+            uiShopEntity = World.DefaultGameObjectInjectionWorld.EntityManager.CreateEntity(typeof(UIShopComponent));
+            uiDialogEntity = World.DefaultGameObjectInjectionWorld.EntityManager.CreateEntity(typeof(UIDialogComponent));
+            uiSleepEntity = World.DefaultGameObjectInjectionWorld.EntityManager.CreateEntity(typeof(UISleepCheckComponent));
+
+            if (World.DefaultGameObjectInjectionWorld.EntityManager.IsComponentEnabled<UIShopComponent>(uiShopEntity))
+                World.DefaultGameObjectInjectionWorld.EntityManager.SetComponentEnabled<UIShopComponent>(uiShopEntity, false);
+            if (World.DefaultGameObjectInjectionWorld.EntityManager.IsComponentEnabled<UIDialogComponent>(uiDialogEntity))
+                World.DefaultGameObjectInjectionWorld.EntityManager.SetComponentEnabled<UIDialogComponent>(uiDialogEntity, false);
+            if (World.DefaultGameObjectInjectionWorld.EntityManager.IsComponentEnabled<UISleepCheckComponent>(uiSleepEntity))
+                World.DefaultGameObjectInjectionWorld.EntityManager.SetComponentEnabled<UISleepCheckComponent>(uiSleepEntity, false);
         }
 
         public override void Complete()
@@ -23,19 +43,22 @@ namespace WATP
             Root.SoundManager.PlaySound(SoundTrack.BGM, "farm", true);
         }
 
-        public override IEnumerator Load()
+        public async override UniTask Load(CancellationTokenSource cancellationToken)
         {
-            Root.SceneLoader.TileMapManager.MapSetting("House");
-            yield return OpenIngamePage();
+            await Root.SceneLoader.TileMapManager.MapSetting("House");
+            if(cancellationToken.IsCancellationRequested) return;
+            await OpenIngamePage();
         }
 
-        public override IEnumerator Unload()
+        public async override UniTask Unload(CancellationTokenSource cancellationToken)
         {
             Root.SceneLoader.TileMapManager.Clear();
             UnBind();
             cameraBounds.Dispose();
-
-            yield return null;
+            World.DefaultGameObjectInjectionWorld.EntityManager.DestroyEntity(uiShopEntity);
+            World.DefaultGameObjectInjectionWorld.EntityManager.DestroyEntity(uiDialogEntity);
+            World.DefaultGameObjectInjectionWorld.EntityManager.DestroyEntity(uiSleepEntity);
+            await UniTask.Yield(cancellationToken: cancellationToken.Token);
         }
 
         public override void Update()
@@ -55,15 +78,12 @@ namespace WATP
                 if (Root.State.logicState.Value != LogicState.Normal) return;
 
                 Root.State.TodayUpdateSetting();
-
-                Root.State.inventory.AddInventory(203, 1);
             }
 
             if (Input.GetKeyDown(KeyCode.F8))
             {
                 if (Root.State.logicState.Value != LogicState.Normal) return;
                 Root.State.MonthUpdateSetting();
-                Root.State.inventory.AddInventory(501, 2);
             }
 
             if (Input.GetKeyDown(KeyCode.F10))
@@ -136,9 +156,29 @@ namespace WATP
             }
 
             cameraBounds.Update();
+
+
+            if (World.DefaultGameObjectInjectionWorld.EntityManager.IsComponentEnabled<UIShopComponent>(uiShopEntity))
+            {
+                OpenShopPage().Forget();
+                World.DefaultGameObjectInjectionWorld.EntityManager.SetComponentEnabled<UIShopComponent>(uiShopEntity, false);
+            }
+
+            if (World.DefaultGameObjectInjectionWorld.EntityManager.IsComponentEnabled<UIDialogComponent>(uiDialogEntity))
+            {
+                var com = World.DefaultGameObjectInjectionWorld.EntityManager.GetComponentData<UIDialogComponent>(uiDialogEntity);
+                OpenDialogPopup(com.dataId, com.dialogType).Forget();
+                World.DefaultGameObjectInjectionWorld.EntityManager.SetComponentEnabled<UIDialogComponent>(uiDialogEntity, false);
+            }
+
+            if (World.DefaultGameObjectInjectionWorld.EntityManager.IsComponentEnabled<UISleepCheckComponent>(uiSleepEntity))
+            {
+                OpenSleepCheckPopup().Forget();
+                World.DefaultGameObjectInjectionWorld.EntityManager.SetComponentEnabled<UISleepCheckComponent>(uiSleepEntity, false);
+            }
         }
 
-        private async UniTaskVoid OpenIngamePage()
+        private async UniTask OpenIngamePage()
         {
             var ingamePage = new IngamePage();
             ingamePage = await Root.UIManager.Widgets.CreateAsync<IngamePage>(ingamePage, IngamePage.DefaultPrefabPath);
@@ -159,6 +199,25 @@ namespace WATP
             menuPopup.tabMenu.SelectTab(4);
         }
 
+        private async UniTaskVoid OpenDialogPopup(int id, int type)
+        {
+            var dialogPopup = new DialogPopup();
+            dialogPopup = await Root.UIManager.Widgets.CreateAsync<DialogPopup>(dialogPopup, DialogPopup.DefaultPrefabPath);
+            dialogPopup.Setting(id, type);
+        }
+
+        private async UniTaskVoid OpenShopPage()
+        {
+            var shoppage = new ShopPage();
+            shoppage = await Root.UIManager.Widgets.CreateAsync<ShopPage>(shoppage, ShopPage.DefaultPrefabPath, null, true);
+        }
+
+        private async UniTaskVoid OpenSleepCheckPopup()
+        {
+            var sleepCheckPopup = new SleepCheckPopup();
+            sleepCheckPopup = await Root.UIManager.Widgets.CreateAsync<SleepCheckPopup>(sleepCheckPopup, SleepCheckPopup.DefaultPrefabPath);
+        }
+
         private void CloseMenuPopup()
         {
             menuPopup.ClosePopup();
@@ -177,9 +236,9 @@ namespace WATP
 
         private void OnEntityCreate(EventCreateEntity e)
         {
-            if (e.Entity is not FarmerEntity) return;
+            if (e.Entity is not FarmerAspect) return;
 
-            cameraBounds.Setting(e.Entity as FarmerEntity);
+            cameraBounds.Setting();
         }
     }
 }

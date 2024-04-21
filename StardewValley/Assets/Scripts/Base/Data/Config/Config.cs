@@ -2,6 +2,9 @@ using UnityEngine;
 
 namespace WATP.Data
 {
+    /// <summary>
+    /// 기본 값 정의
+    /// </summary>
     public class Config
     {
         #region Default
