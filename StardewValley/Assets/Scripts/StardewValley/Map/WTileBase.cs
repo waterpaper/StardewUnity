@@ -7,7 +7,7 @@ namespace WATP.Map
     [CreateAssetMenu]
     public class WTileBase : TileBase
     {
-        public Sprite m_Sprite;
+        public Sprite m_Sprite;                 //해당 image 설정
         public GameObject m_Prefab;
 
         public override void GetTileData(Vector3Int location, ITilemap tilemap, ref TileData tileData)

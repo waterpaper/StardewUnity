@@ -14,10 +14,10 @@ namespace WATP.Map
 
     public enum CellKind
     {
-        Cell,
-        FarmLand,
-        Water,
-        Portal,
+        Cell,           //기본 셀
+        FarmLand,       //농장 타일
+        Water,          //물 타일
+        Portal,         //포탈 타일
         None
     }
 
@@ -31,10 +31,12 @@ namespace WATP.Map
         public string ImageName { get; protected set; }
         public int ImageIndex { get; protected set; }                                //어떤 이미지에 위치하는지 나타낸다(세이브, 로드시 사용)
 
+        //a* 길찾기 알고리즘에 필요한 property
         public Cell Parent { get; set; }
         public int HCost { get; protected set; }
         public int GCost { get; protected set; }
         public int FCost { get; protected set; }
+        //
 
         public Vector2 Position { get; protected set; }
         public Rect Rect { get; protected set; }
@@ -47,15 +49,6 @@ namespace WATP.Map
 
         public bool Block { get => BlockType != CellBlockType.NotBlock; }
         public bool ObjectBlock { get; set; } = false;
-
-        private int TopCellIndex { get; set; } = -1;
-        private int BottomCellIndex { get; set; } = -1;
-        private int LeftCellIndex { get; set; } = -1;
-        private int RightCellIndex { get; set; } = -1;
-        public Cell TopCell { get => NeighborCells.Count == 0 || TopCellIndex == -1 ? null : NeighborCells[TopCellIndex]; }
-        public Cell BottomCell { get => NeighborCells.Count == 0 || BottomCellIndex == -1 ? null : NeighborCells[BottomCellIndex]; }
-        public Cell LeftCell { get => NeighborCells.Count == 0 || LeftCellIndex == -1 ? null : NeighborCells[LeftCellIndex]; }
-        public Cell RightCell { get => NeighborCells.Count == 0 || RightCellIndex == -1 ? null : NeighborCells[RightCellIndex]; }
 
         public Cell(Vector2 position, float gridSize, char type, bool block)
         {
@@ -131,11 +124,6 @@ namespace WATP.Map
         public bool AddNeighbor(Cell cell, string pos = "")
         {
             if (cell == null || NeighborCells.Contains(cell)) return false;
-
-            if (pos.Equals("t")) TopCellIndex = NeighborCells.Count;
-            else if (pos.Equals("b")) BottomCellIndex = NeighborCells.Count;
-            else if (pos.Equals("r")) RightCellIndex = NeighborCells.Count;
-            else if (pos.Equals("l")) LeftCellIndex = NeighborCells.Count;
 
             NeighborCells.Add(cell);
             return true;
