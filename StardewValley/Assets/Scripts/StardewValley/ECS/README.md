@@ -86,7 +86,7 @@ public struct MoveComponent : IComponentData
 <br/>
 
 Component는 해당 폴더에 정의되어 있습니다.<br/>
-[Component 폴더](/Component)<br/>
+[Component 폴더](./Component)<br/>
 
 ---
 ### System
@@ -124,7 +124,7 @@ public partial struct MoveSystem : ISystem
 ```
 
 System은 해당 폴더에 정의되어 있습니다.<br/>
-[System 폴더](/System)<br/><br/>
+[System 폴더](./System)<br/><br/>
 
 ---
 
@@ -147,7 +147,7 @@ public readonly partial struct FarmerAspect : IAspect, IWATPObjectAspect
 }
 ```
 aspect은 해당 폴더에 정의되어 있습니다.<br/>
-[Aspect 폴더](/Entity)<br/><br/>
+[Aspect 폴더](./Entity)<br/><br/>
 
 ---
 
