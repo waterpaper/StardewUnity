@@ -12,8 +12,8 @@ Entity Component System의 약자로 게임 오브젝트 데이터를 엔티티,
 ---
 ### Entity
 
-어떤 component를 가지고 있는지 식별하는 ID, 이름이 없는 초경량 gameobject
-같은 component 구성을 가진 entity 조합(Archetype)을 chunk단위로 저장하여 사용됩니다.<br/><br/>
+- 어떤 component를 가지고 있는지 식별하는 ID, 이름이 없는 초경량 gameobject.<br/>
+- 같은 component 구성을 가진 entity 조합(Archetype)을 chunk단위로 저장하여 사용됩니다.<br/><br/>
 
 생성 예제
 
@@ -33,11 +33,11 @@ World.DefaultGameObjectInjectionWorld.EntityManager.DestroyEntity(entity);
 
 ### Component
 
-entity의 속성(data)를 정의하는 요소<br/>
-같은 component 구성을 가진 entity 조합(Archetype)을 chunk단위로 저장하여 사용됩니다.<br/>
-system에서 조회하여 사용 가능합니다.<br/>
+- entity의 속성(data)를 정의하는 요소<br/>
+- 같은 component 구성을 가진 entity 조합(Archetype)을 chunk단위로 저장하여 사용됩니다.<br/>
+- system에서 조회하여 사용 가능합니다.<br/>
 
-프로젝트 생성 예제
+생성 예제
 
 ```cs
 public struct TransformComponent :IComponentData
@@ -60,12 +60,13 @@ public Entity Build()
 ```
 <br/>
 
-Component는 역활에 따라 unmanaged, managed, tag 등으로 나눠집니다.<br/>
-unmanaged는 struct, managed는 class 로 정의해 사용합니다.<br/>
-unmanaged는 호환되는 일부 타입만 사용 가능합니다.(jobs, burst 위함)<br/>
-managed는 추후 Burst 및 Job 사용시 제한이 존재합니다.(최적화 제한)<br/>
+- Component는 역활에 따라 unmanaged, managed, tag 등으로 나눠집니다.<br/>
+-> unmanaged는 struct, managed는 class 로 정의해 사용합니다.<br/>
+-> unmanaged는 호환되는 일부 타입만 사용 가능합니다.(jobs, burst 위함)<br/>
+-> managed는 추후 Burst 및 Job 사용시 제한이 존재합니다.(최적화 제한)<br/>
 
-프로젝트 예제
+
+예제
 
 ```cs
 public struct MoveComponent : IComponentData
@@ -85,14 +86,14 @@ public struct MoveComponent : IComponentData
 <br/>
 
 Component는 해당 폴더에 정의되어 있습니다.<br/>
-[Component 폴더](/Component/)<br/>
+[Component 폴더](/Component)<br/>
 
 ---
 ### System
 
-component를 업데이트 하는 로직입니다.<br/>
-특정 조건(component)를 만족하는 entity를 조회해서 업데이트하는 방식을 기본으로 사용합니다.<br/>
-또한 unmanaged component만 조작시 job으로 변경 가능합니다.<br/>
+- component를 업데이트 하는 로직입니다.<br/>
+- 특정 조건(component)를 만족하는 entity를 조회해서 업데이트하는 방식을 기본으로 사용합니다.<br/>
+- unmanaged component만 조작시 job으로 변경 가능합니다.<br/>
 
 ```cs
 [UpdateBefore(typeof(InputMoveSystem))]//해당 system 이전 동작해야하는 system
@@ -123,14 +124,14 @@ public partial struct MoveSystem : ISystem
 ```
 
 System은 해당 폴더에 정의되어 있습니다.<br/>
-[System 폴더](/System/)<br/><br/>
+[System 폴더](/System)<br/><br/>
 
 ---
 
 ### Aspect
-entity 요소의 하위 집합을 단위 C#구조체로 그룹화하는 래퍼<br/>
-해당 프로젝트에서는 Component를 가지고 있는 Object 처럼 사용하였습니다.<br/>
-aspect를 entity가 필요한 각 부분(ex:view)에서 사용함으로 재 참조를 명시적으로 구현해야합니다.<br/>
+- entity 요소의 하위 집합을 단위 C#구조체로 그룹화하는 래퍼<br/>
+- 해당 프로젝트에서는 Component를 가지고 있는 Object 처럼 사용하였습니다.<br/>
+- aspect를 entity가 필요한 각 부분(ex:view)에서 사용함으로 재 참조를 명시적으로 구현해야합니다.<br/>
 
 ```cs
 public readonly partial struct FarmerAspect : IAspect, IWATPObjectAspect
@@ -146,23 +147,24 @@ public readonly partial struct FarmerAspect : IAspect, IWATPObjectAspect
 }
 ```
 aspect은 해당 폴더에 정의되어 있습니다.<br/>
-[Aspect은 폴더](/Entity/)<br/><br/>
+[Aspect 폴더](/Entity)<br/><br/>
 
 ---
 
 ### 기타 추가적 요소
 - Pure
-    gameobject 및 mono를 ecs 상에서는 완전히 제거하였습니다.<br/>
-    data만을 이용하여 프로젝트를 구동하는 것이 가능합니다.<br/>
-    대신 모든 제어를 code단에서 수행하여야 하며 convert(prefab component -> ecs compoent로 변환) 혹은 authoring(prefab에 적용)부분이 존재하지 않는다.<br/>
-    해당 프로젝트에서는 View가 aspect를 참조해 prefab을 표현해준다.<br/>
+
+    - gameobject 및 mono를 ecs 상에서는 완전히 제거하였습니다.<br/>
+    - data만을 이용하여 프로젝트를 구동하는 것이 가능합니다.<br/>
+    - 대신 모든 제어를 code단에서 수행하여야 하며 convert(prefab component -> ecs compoent로 변환) 혹은 authoring(prefab에 적용)부분이 존재하지 않습니다.<br/>
+    - 해당 프로젝트에서는 View가 aspect를 참조해 prefab을 표현 해줍니다.<br/>
 
 
 - Structural change
 
-    entity를 추가, 제거하거나 entity에 component를 추가, 제거할때에도 structural change가 일어납니다. <br/>
-    structural change가 일어나면 전체 데이터 구조를 재 설정함으로 모든 참조가 깨지게 됩니다.(Native 할당 또한)<br/>
-    해당 프로젝트에서는 structural change를 제어하기 위해 map의 entity가 생성, 제거될때를 한 곳에서 제어합니다.<br/>
+    - entity를 추가, 제거하거나 entity에 component를 추가, 제거할때에도 structural change가 일어납니다. <br/>
+    - structural change가 일어나면 전체 데이터 구조를 재 설정함으로 모든 참조가 깨지게 됩니다.(Native 할당 또한)<br/>
+    - 해당 프로젝트에서는 structural change를 제어하기 위해 map의 entity가 생성, 제거될때를 한 곳에서 제어합니다.<br/>
     [링크](../Data/MapObjectManager.cs)<br/>
 
     재 참조 예시
@@ -186,6 +188,7 @@ aspect은 해당 폴더에 정의되어 있습니다.<br/>
 <br/>
 
 - Random
+
     random시 job에서 이용가능하게 처리하려면 component를 추가한 entity가 하나 필요합니다.(조회 가능하게)<br/>
     
 ```cs
@@ -225,48 +228,48 @@ unity는 싱글 스레드 기반이라 다중 스레드 작업시 경쟁 조건,
 이를 위해 c#의 job을 이용해 unity에서 안전한 멀티스레딩을 구현하는 시스템입니다.<br/>
 별도의 스레드를 생성하지 않고 워커스레드에서 잡을 가져와서 실행하는 방식입니다.<br/>
 
-    ```cs
-    [BurstCompile(CompileSynchronously = true)]
-    public partial struct MoveJob : IJobEntity
+[링크](/StardewValley/Assets/Scripts/StardewValley/ECS/System/MoveSystem.cs)<br/>
+```cs
+[BurstCompile(CompileSynchronously = true)]
+public partial struct MoveJob : IJobEntity
+{
+    public float frameTime;
+    // Execute() is called when the job runs.
+    public void Execute(Entity entity, ref TransformComponent transform, ref MoveComponent move, ref PhysicsComponent physics)
     {
-        public float frameTime;
-        // Execute() is called when the job runs.
-        public void Execute(Entity entity, ref TransformComponent transform, ref MoveComponent move, ref PhysicsComponent physics)
+        move.isMoveTurn = false;
+        if (move.isEnable == false || math.all(move.targetPos == float3.zero)) return;
+
+        if (move.targetPos.y > transform.position.y)
         {
-            move.isMoveTurn = false;
-            if (move.isEnable == false || math.all(move.targetPos == float3.zero)) return;
-
-            if (move.targetPos.y > transform.position.y)
-            {
-                transform.rotation = new float3(0, 1, 0);
-            }
-            else if (move.targetPos.y < transform.position.y)
-            {
-                transform.rotation = new float3(0, -1, 0);
-            }
-            else if (move.targetPos.x > transform.position.x)
-            {
-                transform.rotation = new float3(1, 0, 0);
-            }
-            else if (move.targetPos.x < transform.position.x)
-            {
-                transform.rotation = new float3(-1, 0, 0);
-            }
-            else
-                return;
-
-            var power = move.speed * frameTime;
-            var dis = math.distance(move.targetPos, transform.position);
-            if (power > dis)
-                power = dis;
-
-            physics.velocity += transform.rotation * power;
-            move.isMoveTurn = true;
+            transform.rotation = new float3(0, 1, 0);
         }
-    }
-    ```
+        else if (move.targetPos.y < transform.position.y)
+        {
+            transform.rotation = new float3(0, -1, 0);
+        }
+        else if (move.targetPos.x > transform.position.x)
+        {
+            transform.rotation = new float3(1, 0, 0);
+        }
+        else if (move.targetPos.x < transform.position.x)
+        {
+            transform.rotation = new float3(-1, 0, 0);
+        }
+        else
+            return;
 
-    (/StardewValley/Assets/Scripts/StardewValley/ECS/System/MoveSystem.cs)<br/>
+        var power = move.speed * frameTime;
+        var dis = math.distance(move.targetPos, transform.position);
+        if (power > dis)
+            power = dis;
+
+        physics.velocity += transform.rotation * power;
+        move.isMoveTurn = true;
+    }
+}
+```
+
     
 ---
 
