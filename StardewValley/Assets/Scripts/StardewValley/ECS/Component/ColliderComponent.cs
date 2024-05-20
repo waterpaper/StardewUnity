@@ -14,6 +14,10 @@ namespace WATP.ECS
         public ColliderComponent ColliderComponent { get; }
     }
 
+    /// <summary>
+    /// collider를 갖는 component
+    /// type에 따라 square, circle이 있으며 충돌 처리가 가능하다.
+    /// </summary>
     [System.Serializable]
     public class ColliderComponent
     {

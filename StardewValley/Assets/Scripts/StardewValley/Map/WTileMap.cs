@@ -41,6 +41,10 @@ namespace WATP.Map
     }
 
 
+    /// <summary>
+    /// 각 layer에 해당하는 tile map을 생성 관리하는 클래스
+    /// cell을 통해 길 찾기와 같은 옵션처리 로직도 관리한다.
+    /// </summary>
     public class WTileMap
     {
         int layerIndex;

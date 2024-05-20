@@ -6,6 +6,9 @@ using WATP.UI;
 
 namespace WATP
 {
+    /// <summary>
+    /// Maptool ¾À
+    /// </summary>
     public class MaptoolScene : GameSceneBase
     {
         public override void Init()

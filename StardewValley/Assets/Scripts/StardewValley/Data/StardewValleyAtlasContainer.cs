@@ -7,6 +7,10 @@ using Cysharp.Threading.Tasks;
 namespace WATP.Data
 {
 
+    /// <summary>
+    /// 전체 Atlas를 관리하는 클래스
+    /// index를 불러와야하는 atlas는 미리 캐싱해서 사용
+    /// </summary>
     public partial class AtlasContainer
     {
         public readonly string FARMER_BODY_PATH = "Atlas_FarmerBody";

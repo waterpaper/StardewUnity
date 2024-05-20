@@ -2,6 +2,9 @@ using UnityEngine;
 
 namespace WATP.Player
 {
+    /// <summary>
+    /// player 정보 데이터
+    /// </summary>
     public class PlayerInfo
     {
         public SubjectData<string> name;                             //이름

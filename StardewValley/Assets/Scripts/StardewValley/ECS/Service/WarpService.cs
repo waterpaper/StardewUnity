@@ -4,7 +4,8 @@ using UnityEngine;
 namespace WATP.ECS
 {
     /// <summary>
-    /// 움직임 컴포넌트
+    /// 워프 처리를 위한 서비스 로직
+    /// 해당하는 셀이 warp 정보를 가지고 있으면 맵 이동을 처리한다.
     /// </summary>
     public class WarpService : IService
     {

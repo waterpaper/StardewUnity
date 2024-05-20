@@ -5,6 +5,9 @@ namespace WATP.ECS
         public PlayerComponent PlayerComponent { get; }
     }
 
+    /// <summary>
+    /// entity중 player를 나타내는 component
+    /// </summary>
     [System.Serializable]
     public class PlayerComponent
     {

@@ -2,7 +2,11 @@ using UnityEngine;
 
 namespace WATP.ECS
 {
-
+    /// <summary>
+    /// 동물 클래스
+    /// 원하는 기능을 컴포넌트를 추가하여 구현한다.
+    /// 초기화가 필요한 경우에만 클래스에서 처리한다.
+    /// </summary>
     [System.Serializable]
     public class AnimalEntity : Entity, IMoveComponent, IColliderComponent, ISightComponent, ITargetableComponent, IDataComponent, IPhysicsComponent, ICellTargetComponent, IFsmComponent, ICellAddObjectComponent
     {

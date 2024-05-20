@@ -6,6 +6,10 @@ using UnityEngine;
 
 namespace WATP.View
 {
+    /// <summary>
+    /// entity를 화면에 표현해주는 class
+    /// 기본적으로는 prefab을 late load(비동기)한다.
+    /// </summary>
     [Serializable]
     public abstract class View<T> : IView, IPrefabHandler where T : IEntity
     {

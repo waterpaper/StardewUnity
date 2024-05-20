@@ -7,6 +7,9 @@ namespace WATP.ECS
         public TargetableComponent TargetableComponent { get; }
     }
 
+    /// <summary>
+    /// entity중 target이 가능한 component
+    /// </summary>
     [System.Serializable]
     public class TargetableComponent
     {

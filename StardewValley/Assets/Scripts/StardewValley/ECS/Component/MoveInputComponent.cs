@@ -7,6 +7,9 @@ namespace WATP.ECS
         public MoveInputComponent MoveInputComponent { get; }
     }
 
+    /// <summary>
+    /// entity중 움직임 입력 상태를 처리하기 위한 component
+    /// </summary>
     [System.Serializable]
     public class MoveInputComponent
     {

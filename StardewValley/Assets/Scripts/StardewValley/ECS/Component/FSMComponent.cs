@@ -26,6 +26,10 @@ namespace WATP.ECS
     {
     }
 
+    /// <summary>
+    /// entity 상태를 관리하는 component중 fsm을 이용하는 컴포넌트
+    /// 내부에 정의된 transition에 따라 state를 변경해준다(미리 정의)
+    /// </summary>
     public class FsmComponent : StateComponent
     {
         public string NextState { get; set; } = "default";

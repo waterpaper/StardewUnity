@@ -4,7 +4,8 @@ using UnityEngine;
 namespace WATP.ECS
 {
     /// <summary>
-    /// 움직임 컴포넌트
+    /// 움직임 입력 컴포넌트
+    /// 물리에 이동 속도를 추가한다.
     /// </summary>
     public class InputMoveService : IService
     {

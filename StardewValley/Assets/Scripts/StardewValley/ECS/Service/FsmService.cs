@@ -2,6 +2,9 @@ using System.Collections.Generic;
 
 namespace WATP.ECS
 {
+    /// <summary>
+    /// 상태 처리 로직
+    /// </summary>
     public class StateService : IService
     {
         public List<IStateComponent> stateComponents = new();

@@ -7,6 +7,9 @@ namespace WATP.ECS
         public WarpComponent WarpComponent { get; }
     }
 
+    /// <summary>
+    /// entity중 워프 기능을 처리하기 위한 component
+    /// </summary>
     [System.Serializable]
     public class WarpComponent
     {

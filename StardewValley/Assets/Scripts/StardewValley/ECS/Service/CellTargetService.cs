@@ -5,7 +5,8 @@ using WATP.Map;
 namespace WATP.ECS
 {
     /// <summary>
-    /// 움직임 컴포넌트
+    /// 길 찾기 목표 cell을 설정하는 서비스 로직
+    /// 목표 cell까지의 길찾기 및 이동을 관리한다.
     /// </summary>
     public class CellTargetService : IService
     {

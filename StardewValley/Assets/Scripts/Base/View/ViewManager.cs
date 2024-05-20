@@ -5,6 +5,10 @@ using WATP.ECS;
 
 namespace WATP.View
 {
+    /// <summary>
+    /// entity의 해당되는 것중 view가 필요한 부분을 생성, 관리해주는 클래스
+    /// event로 통신 하여 관리한다.
+    /// </summary>
     public class ViewManager
     {
         #region Property

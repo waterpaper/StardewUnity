@@ -3,7 +3,11 @@ using WATP.UI;
 
 namespace WATP.ECS
 {
-
+    /// <summary>
+    /// npc 클래스
+    /// 원하는 기능을 컴포넌트를 추가하여 구현한다.
+    /// 초기화가 필요한 경우에만 클래스에서 처리한다.
+    /// </summary>
     [System.Serializable]
     public class NpcEntity : Entity, IMoveComponent, IColliderComponent, ISightComponent, ITargetableComponent, IDataComponent, IPhysicsComponent, IConversationComponent, IInteractionComponent, ICellTargetComponent, IFsmComponent
     {

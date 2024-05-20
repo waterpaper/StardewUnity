@@ -5,6 +5,9 @@ namespace WATP.ECS
         public DataComponent DataComponent { get; }
     }
 
+    /// <summary>
+    /// 기본 데이터 정보를 가지고 있는 component
+    /// </summary>
     [System.Serializable]
     public class DataComponent
     {

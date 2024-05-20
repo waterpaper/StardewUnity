@@ -81,6 +81,11 @@ namespace WATP.Data
 
     }
 
+    /// <summary>
+    /// 환경설정을 관리하는 클래스
+    /// 기본 옵션값을 각 기기에 저장해서 사용한다.
+    /// 바이너리 파일로 save & load
+    /// </summary>
     public class Preferences
     {
         private LocalSaveData saveData;

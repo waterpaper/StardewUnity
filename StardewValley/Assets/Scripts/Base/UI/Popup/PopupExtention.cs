@@ -4,6 +4,9 @@ using Cysharp.Threading.Tasks;
 
 namespace WATP.UI
 {
+    /// <summary>
+    /// popup 기반 확장 코드
+    /// </summary>
     public static class PopupExtention
     {
         public static T CreatePopup<T>(this PopupWidget popup, string popupName, bool isOpen, RectTransform popupRoot) where T : PopupWidget

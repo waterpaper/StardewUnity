@@ -7,6 +7,10 @@ using Cysharp.Threading.Tasks;
 namespace WATP.Data
 {
 
+    /// <summary>
+    /// 전체 Atlas를 관리하는 클래스
+    /// 추가할 경우 parial로 구현
+    /// </summary>
     public partial class AtlasContainer
     { 
         // 변환이 자주 필요한 atlas는 캐시로 저장해서 미리 load히여 처리(메모리 이슈 존재)

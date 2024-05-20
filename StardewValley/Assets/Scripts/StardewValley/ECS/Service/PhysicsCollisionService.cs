@@ -3,6 +3,10 @@ using UnityEngine;
 
 namespace WATP.ECS
 {
+    /// <summary>
+    /// 물리중 충돌 로직
+    /// 활성화된 collider 및 cell중 충돌이 감지되면 velocity를 처리한다.
+    /// </summary>
     public class PhysicsCollisionService : IService
     {
         public List<IColliderComponent> colliderComponents = new();

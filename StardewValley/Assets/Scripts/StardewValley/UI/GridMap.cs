@@ -5,6 +5,11 @@ using WATP.Map;
 
 namespace WATP.UI
 {
+    /// <summary>
+    /// map에 Grid를 추가해주는 클래스
+    /// dev test시 사용
+    /// 옵션 별로 색을 설정한다.
+    /// </summary>
     public class GridMap : MonoBehaviour
     {
         Tilemap tilemap;

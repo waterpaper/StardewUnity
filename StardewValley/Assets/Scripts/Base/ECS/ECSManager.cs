@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using UnityEngine;
 using UnityEngine.Profiling;
 
 namespace WATP.ECS
 {
+    /// <summary>
+    /// 전체 ingame의 entity 로직을 관리하는 매니저 클래스
+    /// 각 entity를 관리하며 원하는 프레임(고정)으로 업데이트 되도록 도와준다.
+    /// </summary>
     public class ECSManager
     {
         private bool isChanged;
@@ -46,7 +48,7 @@ namespace WATP.ECS
         {
             Clear();
 
-
+            //로직 추가 순서에 따른 변화 가능
             processes.Add(new CellTargetService());
             processes.Add(new MoveService());
 
@@ -63,27 +65,6 @@ namespace WATP.ECS
             processes.Add(new SleepService());
             processes.Add(new DelayDeleteService());
 
-            //추가된 순서대로 업데이트 -> 순서 변경시 동작이 변경될 수 있음
-            /*processes.Add(new BuffProcess());
-            processes.Add(new MapDebuffProcess());
-
-            processes.Add(new StateProcess());
-
-            // 타게팅 검출
-            processes.Add(new DetectionProcess());
-
-            //움직임
-            processes.Add(new MoveProcess());
-            // 충돌감지 프로세스
-            processes.Add(new CollisionProcess());
-
-            //공격
-            processes.Add(new AttackProcess()); // 스킬 발동 프로세스
-
-            processes.Add(new ActionProcess()); // 추가 행동 프로세스(스펠, 발사체 등)
-
-            //스킬 구성
-            processes.Add(new SkillActionProcess()); // skill action 업데이트 프로세스*/
             Bind();
         }
 

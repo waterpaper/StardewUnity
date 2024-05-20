@@ -9,6 +9,10 @@ using WATP.Player;
 
 namespace WATP
 {
+    /// <summary>
+    /// 전체 게임 정보를 가지고 있는 클래스
+    /// 플레이어 및 진행 정보를 가지고 있다.
+    /// </summary>
     public partial class GameState
     {
         public SubjectData<int> month;

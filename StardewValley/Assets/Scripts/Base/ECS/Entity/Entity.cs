@@ -21,7 +21,9 @@ namespace WATP.ECS
             get; set;
         }
 
-
+        /// <summary>
+        /// 생성시 빌더 패턴을 통해 정해진 루틴대로 생성한다.
+        /// </summary>
         public T Builder<T>() where T : Entity
         {
             this.uid = GenID.Get<Entity>();
@@ -29,11 +31,17 @@ namespace WATP.ECS
             return this as T;
         }
 
+        /// <summary>
+        /// 초기화 로직
+        /// </summary>
         public override void OnInitialize()
         {
             eventComponent.onEvent?.Invoke("Initialize");
         }
 
+        /// <summary>
+        /// 삭제 처리시 로직
+        /// </summary>
         public override void OnDestroy()
         {
             eventComponent.onEvent?.Invoke("Destroy");

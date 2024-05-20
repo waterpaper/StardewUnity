@@ -14,13 +14,17 @@ namespace WATP.Map
 
     public enum CellKind
     {
-        Cell,
-        FarmLand,
-        Water,
-        Portal,
+        Cell,           //기본 셀
+        FarmLand,       //농장 타일
+        Water,          //물 타일
+        Portal,         //포탈 타일
         None
     }
 
+    /// <summary>
+    /// cell 내부에 이미지 정보, 옵션정보를 가지며
+    /// 해당 정보를 가지고 tilemap(cell)을 구성한다.
+    /// </summary>
     public class Cell : IComparable
     {
         public string ImagePrefix { get; protected set; }

@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace WATP.UI
 {
+    /// <summary>
+    /// page 기반 확장 코드
+    /// </summary>
     public static class PageExtention
     {
         public static T CreatePage<T>(this PageWidget page, string prefabName, bool isOpen, RectTransform root) where T : PageWidget

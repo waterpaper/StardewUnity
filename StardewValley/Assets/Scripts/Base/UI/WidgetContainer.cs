@@ -7,6 +7,11 @@ using UnityEngine.SceneManagement;
 
 namespace WATP.UI
 {
+    /// <summary>
+    /// UI Widget을 관리하는 container
+    /// 각 widget에 uid를 통해 관리하며
+    /// page와 popup, widget으로 나눠 관리한다.
+    /// </summary>
     public class WidgetContainer
     {
         private UIManager uiManager;

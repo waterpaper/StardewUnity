@@ -7,6 +7,9 @@ namespace WATP.ECS
         public PhysicsComponent PhysicsComponent { get; }
     }
 
+    /// <summary>
+    /// 물리를 처리하기 위한 component
+    /// </summary>
     [System.Serializable]
     public class PhysicsComponent
     {

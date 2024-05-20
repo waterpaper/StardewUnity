@@ -3,13 +3,19 @@ using System.Collections.Generic;
 
 namespace WATP
 {
+    /// <summary>
+    /// inventory 정보 데이터
+    /// </summary>
     public class ItemInfo
     {
         public int itemId;
         public int itemQty;
         public int itemIndex;
     }
-    
+
+    /// <summary>
+    /// 플레이어 인벤토리 클래스
+    /// </summary>
     public class Inventory
     {
         public SubjectData<int> selectIndex;

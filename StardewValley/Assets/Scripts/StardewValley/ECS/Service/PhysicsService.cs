@@ -3,6 +3,10 @@ using UnityEngine;
 
 namespace WATP.ECS
 {
+    /// <summary>
+    /// 물리 처리를 위한 서비스 로직
+    /// 물리 로직중 제일 마지막에 동작하며 앞서 처리된 velocity값을 position에 적용한다.
+    /// </summary>
     public class PhysicsService : IService
     {
         public List<IPhysicsComponent> physicsComponents = new();

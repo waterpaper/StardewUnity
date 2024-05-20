@@ -7,6 +7,9 @@ namespace WATP.ECS
         public UsingInputComponent UsingInputComponent { get; }
     }
 
+    /// <summary>
+    /// entity중 도구 사용 입력 상태를 처리하기 위한 component
+    /// </summary>
     [System.Serializable]
     public class UsingInputComponent
     {

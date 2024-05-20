@@ -7,7 +7,9 @@ using WATP.UI;
 namespace WATP.ECS
 {
     /// <summary>
-    /// 움직임 컴포넌트
+    /// 상호작용을 처리하는 서비스 로직
+    /// 해당하는 위치에 상호작용이 가능한 오브젝트가 존재한다면
+    /// 오브젝트별 기능을 실행한다.
     /// </summary>
     public class InputInteractionService : IService
     {

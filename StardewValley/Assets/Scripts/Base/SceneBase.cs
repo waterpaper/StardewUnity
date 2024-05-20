@@ -2,6 +2,10 @@ using System.Collections;
 
 namespace WATP
 {
+    /// <summary>
+    /// 모든 씬(코드)의 기본 베이스
+    /// 만약 unity scene을 처리하려면 sceneloader에서 로드 프로세스 추가 필요
+    /// </summary>
     public interface IScene
     {
         void Init();

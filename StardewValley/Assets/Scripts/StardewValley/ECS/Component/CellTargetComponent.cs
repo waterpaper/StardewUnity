@@ -8,6 +8,9 @@ namespace WATP.ECS
         public CellTargetComponent CellTargetComponent { get; }
     }
 
+    /// <summary>
+    /// cell을 target으로 이동하는 entity들이 갖는 component
+    /// </summary>
     [System.Serializable]
     public class CellTargetComponent
     {

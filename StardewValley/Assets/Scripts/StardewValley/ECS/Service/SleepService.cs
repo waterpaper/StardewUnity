@@ -6,7 +6,8 @@ using WATP.UI;
 namespace WATP.ECS
 {
     /// <summary>
-    /// 움직임 컴포넌트
+    /// sleep 처리를 위한 서비스 로직
+    /// 해당하는 위치에 entity가 존재하면 기능을 처리한다.
     /// </summary>
     public class SleepService : IService
     {

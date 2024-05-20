@@ -4,6 +4,10 @@ using Cysharp.Threading.Tasks;
 
 namespace WATP.UI
 {
+    /// <summary>
+    /// widget의 기본 정보를 갖는 추상 클래스
+    /// 필요 함수를 override해 사용 가능하다.
+    /// </summary>
     public abstract class Widget : UIElement, IPrefabHandler
     {
         #region static

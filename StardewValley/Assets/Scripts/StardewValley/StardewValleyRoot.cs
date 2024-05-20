@@ -8,6 +8,10 @@ using WATP.View;
 
 namespace WATP
 {
+    /// <summary>
+    /// 게임 최상단 mono
+    /// game object에 게임별 root를 추가해서 게임을 실행한다.
+    /// </summary>
     public class StardewValleyRoot : Root
     {
         ViewManager viewManager;

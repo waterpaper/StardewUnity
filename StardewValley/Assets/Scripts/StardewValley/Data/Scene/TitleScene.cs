@@ -5,6 +5,10 @@ using WATP.UI;
 
 namespace WATP
 {
+    /// <summary>
+    /// Title 씬
+    /// AddressableLoad process를 실행한다 
+    /// </summary>
     public class TitleScene : GameSceneBase
     {
         public override void Init()

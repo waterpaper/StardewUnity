@@ -9,7 +9,12 @@ using WATP.UI;
 
 
 namespace WATP.Map
-{ 
+{
+    /// <summary>
+    /// 전체 타일맵을 관리하는 클래스
+    /// 초기 생성자를 통해 기본 오브젝트를 생성한다.
+    /// GridMap을 통해 화면에 옵션을 출력하며 tileMap을 layer 별로 관리한다.
+    /// </summary>
     public class TileMapManager
     {
         private string mapName;

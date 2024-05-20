@@ -6,6 +6,11 @@ using WATP.UI;
 
 namespace WATP
 {
+    /// <summary>
+    /// ingame 씬
+    /// ingame에 필요한 entity 및 class를 생성하고 설정을 도와준다.
+    /// 옵션 이벤트 처리를 담당한다.
+    /// </summary>
     public class IngameScene : GameSceneBase
     {
         MenuPopup menuPopup;

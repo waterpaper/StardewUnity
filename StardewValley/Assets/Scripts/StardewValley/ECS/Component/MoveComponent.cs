@@ -7,6 +7,9 @@ namespace WATP.ECS
         public MoveComponent MoveComponent { get; }
     }
 
+    /// <summary>
+    /// entity 중 움직임이 가능한 component
+    /// </summary>
     [System.Serializable]
     public class MoveComponent
     {

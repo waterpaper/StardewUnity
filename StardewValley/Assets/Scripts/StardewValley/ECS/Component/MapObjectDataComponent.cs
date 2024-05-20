@@ -5,6 +5,9 @@ namespace WATP.ECS
         public MapObjectDataComponent MapObjectDataComponent { get; }
     }
 
+    /// <summary>
+    /// map object의 기본 정보를 갖는 component
+    /// </summary>
     [System.Serializable]
     public class MapObjectDataComponent
     {

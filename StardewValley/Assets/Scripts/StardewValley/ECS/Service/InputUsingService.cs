@@ -4,7 +4,8 @@ using UnityEngine;
 namespace WATP.ECS
 {
     /// <summary>
-    /// 움직임 컴포넌트
+    /// 도구 사용 서비스 로직
+    /// 해당하는 도구에 맞는 로직을 처리한다.
     /// </summary>
     public class InputUsingService : IService
     {

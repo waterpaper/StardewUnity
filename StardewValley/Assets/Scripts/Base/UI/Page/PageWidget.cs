@@ -4,6 +4,9 @@ using Cysharp.Threading.Tasks;
 
 namespace WATP.UI
 {
+    /// <summary>
+    /// ±âº» ui page widget
+    /// </summary>
     public abstract class PageWidget : Widget
     {
         protected Button closeButton;

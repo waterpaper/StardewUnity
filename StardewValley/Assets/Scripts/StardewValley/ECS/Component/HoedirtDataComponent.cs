@@ -5,6 +5,9 @@ namespace WATP.ECS
         public HoedirtDataComponent HoedirtDataComponent { get; }
     }
 
+    /// <summary>
+    /// 호미질 타일 데이터를 갖는 component
+    /// </summary>
     [System.Serializable]
     public class HoedirtDataComponent
     {

@@ -4,6 +4,10 @@ using UnityEngine.EventSystems;
 
 namespace WATP.UI
 {
+    /// <summary>
+    /// mono에 추가하여 event를 처리하는 클래스 (click 관련)
+    /// 이벤트를 등록하여 해당 이벤트 발생시 사용하는 식으로 사용한다.
+    /// </summary>
     public class ClickComponent : MonoBehaviour, IPointerClickHandler, IPointerDownHandler, IPointerUpHandler, IPointerMoveHandler, IPointerEnterHandler, IPointerExitHandler
     {
         private bool isPointerDown = false;

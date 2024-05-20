@@ -3,7 +3,8 @@ using System.Collections.Generic;
 namespace WATP.ECS
 {
     /// <summary>
-    /// 움직임 컴포넌트
+    /// 제거 기능을 처리하기 위한 클래스
+    /// 딜레이된 delete 혹은 제거가 필요한 entity의 인자를 바꿔서 manager에서 삭제를 처리할 수 있게 도와준다.
     /// </summary>
     public class DelayDeleteService : IService
     {

@@ -5,6 +5,9 @@ using WATP.UI;
 
 namespace WATP
 {
+    /// <summary>
+    /// custom splash ¾À
+    /// </summary>
     public class SplashScene : GameSceneBase
     {
         public override void Init()
